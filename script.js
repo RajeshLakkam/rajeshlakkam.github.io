@@ -1,6 +1,6 @@
 // ============================================================
 // Renders the page from SITE_DATA (see data.js), handles tab
-// switching, the live clock, and the one-time hero animation.
+// switching and the one-time hero animation.
 // ============================================================
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -325,17 +325,6 @@ function initBlogsLink() {
   });
 }
 
-/* ---------- live clock ---------- */
-function startClock() {
-  const clockEl = $("#clock");
-  const fmt = new Intl.DateTimeFormat(undefined, {
-    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
-  });
-  const tick = () => { clockEl.textContent = fmt.format(new Date()); };
-  tick();
-  setInterval(tick, 1000);
-}
-
 renderHero();
 renderSkills();
 renderProjects();
@@ -345,4 +334,3 @@ initMobileNav();
 initReveal();
 initPortrait();
 initBlogsLink();
-startClock();

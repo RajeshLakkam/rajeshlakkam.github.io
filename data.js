@@ -12,7 +12,7 @@ const SITE_DATA = {
   profile: {
     name: "Rajesh Lakkam",
     role: "Software Engineer",
-    tagline: "I like taking things apart to see how they actually work.",
+    tagline: "Building the engines behind reliable, scalable applications.",
     location: "Bengaluru, Karnataka",
     email: "rajesh.lakkam327@gmail.com",
     status: "building enterprise software",

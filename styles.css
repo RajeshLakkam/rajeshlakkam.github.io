@@ -152,13 +152,6 @@ h1, h2, h3 {
   gap: 1.5rem;
 }
 
-.clock {
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  color: var(--ink-faint);
-  white-space: nowrap;
-}
-
 nav.tabs {
   display: flex;
   gap: 1.4rem;
@@ -816,12 +809,6 @@ footer {
     text-align: left;
     padding: 0.85rem 0;
     font-size: 0.9rem;
-  }
-
-  .clock {
-    order: 1;            /* time reads last in the sheet, not first */
-    padding: 0.85rem 0;
-    border-top: 1px solid var(--line);
   }
 
   /* --- fit to the screen --- */
