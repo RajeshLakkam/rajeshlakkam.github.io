@@ -217,6 +217,41 @@ nav.tabs a[aria-current="true"] {
 }
 .nav-blogs:hover { color: var(--signal); }
 
+/* ---------- menu toggle (phones only) ---------- */
+.nav-toggle {
+  display: none;   /* switched on in the phone breakpoint below */
+  background: none;
+  border: 1px solid var(--line);
+  padding: 0.55rem 0.6rem;
+  line-height: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.nav-toggle-bars,
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--signal);
+  transition: transform 0.3s var(--ease), background 0.2s linear;
+}
+.nav-toggle-bars { position: relative; }
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+.nav-toggle-bars::before { top: -6px; }
+.nav-toggle-bars::after  { top: 6px; }
+
+/* bars fold into an X while the menu is open */
+.nav-toggle[aria-expanded="true"] .nav-toggle-bars { background: transparent; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-bars::before { transform: translateY(6px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle-bars::after  { transform: translateY(-6px) rotate(-45deg); }
+
 main { padding: 3.5rem 0 6rem; }
 
 /* Every section is on the page at once; the nav scrolls to them rather than
@@ -718,4 +753,108 @@ footer {
   color: var(--ink-faint);
   position: relative;
   z-index: 1;
+}
+
+/* ============================================================
+   PHONES — collapse the header into a menu, and keep every
+   block inside the viewport width
+   ============================================================ */
+@media (max-width: 720px) {
+
+  /* --- header collapses to a toggle --- */
+  .site-header .wrap {
+    flex-wrap: nowrap;
+    gap: 0.75rem;
+  }
+
+  .nav-toggle { display: block; }
+
+  /* The panel drops out of the header bar and becomes a sheet underneath it.
+     max-height (not display) so the open/close can actually animate; the
+     visibility flip keeps the links out of the tab order while closed. */
+  .header-right {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0 1.25rem;
+    background: rgba(7, 11, 20, 0.97);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    max-height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    transition: max-height 0.35s var(--ease), visibility 0s linear 0.35s;
+  }
+
+  .site-header.is-open .header-right {
+    max-height: 24rem;
+    visibility: visible;
+    transition: max-height 0.35s var(--ease), visibility 0s;
+  }
+
+  /* stacked rows instead of a scrolling strip */
+  nav.tabs {
+    flex-direction: column;
+    gap: 0;
+    overflow: visible;
+  }
+
+  nav.tabs a {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 1rem;
+  }
+
+  /* the sliding underline only makes sense on a horizontal row */
+  .tab-indicator { display: none; }
+
+  .nav-blogs {
+    text-align: left;
+    padding: 0.85rem 0;
+    font-size: 0.9rem;
+  }
+
+  .clock {
+    order: 1;            /* time reads last in the sheet, not first */
+    padding: 0.85rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  /* --- fit to the screen --- */
+  .wrap { padding: 0 1.25rem; }
+
+  main { padding: 2.5rem 0 4.5rem; }
+
+  .panel-section + .panel-section {
+    margin-top: 3rem;
+    padding-top: 2.5rem;
+  }
+
+  .hero { gap: 1.75rem; margin-bottom: 2.5rem; }
+
+  /* long addresses and URLs are the usual cause of a sideways scroll */
+  .readout dd,
+  .readout a,
+  .contact-links a,
+  .project .summary,
+  .origin p {
+    overflow-wrap: anywhere;
+  }
+
+  /* 460px of PDF viewer is most of a phone screen */
+  .media-frame iframe { height: 300px; }
+
+  .skills-grid,
+  .hobbies-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .section-heading { font-size: 1.2rem; }
+
+  .contact-links { gap: 0.75rem 1.5rem; }
 }

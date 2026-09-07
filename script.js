@@ -246,6 +246,42 @@ function initNav() {
   window.addEventListener("resize", () => moveIndicator($('[aria-current="true"]')));
 }
 
+/* ---------- collapsible header (phones) ----------
+   The panel itself is opened and closed in CSS off .is-open; this just owns
+   the state and makes sure it can't get stranded open. */
+function initMobileNav() {
+  const header = $(".site-header");
+  const toggle = $("#navToggle");
+  if (!header || !toggle) return;
+
+  const setOpen = (open) => {
+    header.classList.toggle("is-open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+  };
+
+  toggle.addEventListener("click", () => {
+    setOpen(!header.classList.contains("is-open"));
+  });
+
+  // picking a destination closes the sheet, otherwise it covers what you scrolled to
+  $$("[data-nav], #navBlogs").forEach((link) => {
+    link.addEventListener("click", () => setOpen(false));
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || !header.classList.contains("is-open")) return;
+    setOpen(false);
+    toggle.focus();
+  });
+
+  // rotating to landscape or widening past the breakpoint drops the collapsed
+  // state, so the desktop header never inherits a stale .is-open
+  const wide = window.matchMedia("(min-width: 721px)");
+  const onWide = (e) => { if (e.matches) setOpen(false); };
+  if (wide.addEventListener) wide.addEventListener("change", onWide);
+  else wide.addListener(onWide);   // Safari < 14
+}
+
 /* ---------- reveal on scroll ----------
    The motion the tabs used to play on switch, now tied to scroll position.
    The hero is skipped — it has its own boot sequence on load. */
@@ -305,6 +341,7 @@ renderSkills();
 renderProjects();
 renderHobbies();
 initNav();
+initMobileNav();
 initReveal();
 initPortrait();
 initBlogsLink();
