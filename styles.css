@@ -162,9 +162,14 @@ h1, h2, h3 {
 nav.tabs {
   display: flex;
   gap: 1.4rem;
-  overflow-x: auto;
   position: relative;
+  /* still scrollable on narrow screens so the last item stays reachable —
+     just without the bar sitting under the nav in the header */
+  overflow-x: auto;
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* legacy Edge */
 }
+nav.tabs::-webkit-scrollbar { display: none; }   /* Chrome, Safari, Edge */
 
 nav.tabs a {
   font-family: var(--font-body);
@@ -278,7 +283,20 @@ main { padding: 3.5rem 0 6rem; }
 }
 
 @media (min-width: 800px) {
-  .hero { grid-template-columns: 1.3fr 1fr; align-items: start; }
+  .hero {
+    grid-template-columns: 1.15fr 1fr;
+    /* The name block is a good deal shorter than the photo panel, so pinning
+       both to the top left the text stranded against the top edge of the
+       image. Centring sits it against the middle of the portrait instead. */
+    align-items: center;
+    gap: 3rem;
+  }
+
+  /* Gives the portrait a squarer frame to fill. At the content-driven height
+     the panel was noticeably wider than it was tall, which cropped a portrait
+     photo hard through the middle. Set on the dl rather than the panel so the
+     hover scrim grows with it and still covers the full frame. */
+  .readout dl { min-height: 24rem; }
 }
 
 .hero-name {
@@ -468,11 +486,13 @@ main { padding: 3.5rem 0 6rem; }
     filter: none;
     transform: none;
   }
-  /* nothing sits behind the data here, so drop the scrim and the separation */
+  /* nothing sits behind the data here, so drop the scrim and the separation.
+     min-height goes too — the photo is in the flow above, not filling a frame. */
   .readout dl {
     opacity: 1;
     margin: 0;
     padding: 0;
+    min-height: 0;
     background: none;
   }
   .readout dt, .readout dd, .readout a { text-shadow: none; }

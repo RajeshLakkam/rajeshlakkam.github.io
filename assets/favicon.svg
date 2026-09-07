@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Laptop, drawn to stay legible at 16px: heavy strokes, no small detail.
+       Teal reads on both light and dark browser chrome. -->
+  <rect x="6.5" y="5.5" width="19" height="14" rx="2"
+        fill="#0E1826" stroke="#4CF2C8" stroke-width="2.6"/>
+  <rect x="1.5" y="22" width="29" height="4" rx="2" fill="#4CF2C8"/>
+</svg>
