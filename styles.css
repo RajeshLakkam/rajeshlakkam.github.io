@@ -350,14 +350,16 @@ main { padding: 3.5rem 0 6rem; }
   to   { opacity: 1; transform: translateX(0); }
 }
 
-.readout dl { margin: 0; }
-
 .readout dt {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--ink-faint);
-  text-transform: lowercase;
-  margin-top: 1rem;
+  /* keys read as the accent rather than as the faintest text on the page —
+     --ink-faint was tuned for a flat panel and disappears over a photo */
+  font-size: 0.7rem;
+  color: var(--signal);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+  margin-top: 1.05rem;
 }
 .readout dt:first-child { margin-top: 0; }
 .readout dd {
@@ -368,11 +370,16 @@ main { padding: 3.5rem 0 6rem; }
 .readout ul { list-style: none; margin: 0.2rem 0 0; padding: 0; }
 .readout li { margin-top: 0.25rem; }
 
-/* The portrait sits over the telemetry panel and lifts away on hover, so the
-   photo is the first thing you see and the data is what you get when you reach
-   for it. Nothing is lost if you never hover — the same email and links are
-   rendered again under the Contact tab. */
-.readout { isolation: isolate; }
+/* The portrait sits over the telemetry panel and blurs back on hover rather
+   than disappearing, so the photo stays present behind the data instead of
+   being swapped out for it. Nothing is lost if you never hover — the same
+   email and links are rendered again in the Contact section. */
+.readout {
+  isolation: isolate;
+  /* the photo scales up slightly on hover so its blurred edges never wash out
+     against the panel — clip the overflow so it stays inside the frame */
+  overflow: hidden;
+}
 
 .readout-portrait {
   position: absolute;
@@ -382,25 +389,68 @@ main { padding: 3.5rem 0 6rem; }
   height: 100%;
   object-fit: cover;
   display: block;
-  /* nudged toward the panel's own palette so it sits in the theme rather than
-     on top of it; both corrections drop away on reveal */
-  filter: grayscale(1) contrast(1.05) brightness(0.92);
+  /* shown exactly as shot — the only treatment is the hover blur below */
   transition:
-    opacity 0.5s var(--ease),
     filter 0.5s var(--ease),
     transform 0.5s var(--ease);
 }
 
-/* keep the reticle corners on top of the photo — they frame both states */
+/* keep the reticle corners on top of the photo — they frame both states.
+   Pulled flush to the edge rather than straddling it, so overflow:hidden
+   above can't shave a pixel off their 2px stroke. */
 .readout::before, .readout::after { z-index: 2; }
+.readout::before { top: 0; left: 0; }
+.readout::after  { bottom: 0; right: 0; }
+
+/* The data sits above the photo but stays hidden until you reach for it.
+   The negative margin cancels its own padding, so the scrim below fills the
+   whole panel while the panel's height stays exactly what it was. */
+.readout dl {
+  position: relative;
+  z-index: 3;
+  margin: -1.4rem -1.5rem;
+  padding: 1.4rem 1.5rem;
+  opacity: 0;
+  /* a scrim does the legibility work that a heavy text outline was doing —
+     one flat, even ground under the type instead of a halo per glyph */
+  background: rgba(7, 11, 20, 0.62);
+  transition: opacity 0.5s var(--ease);
+}
 
 .readout:hover .readout-portrait,
 .readout:focus-within .readout-portrait,
 .readout:focus .readout-portrait {
-  opacity: 0;
-  filter: grayscale(0);
-  transform: scale(1.03);
-  pointer-events: none;
+  /* full colour at rest, black and white once you're reading over it — the
+     photo drops back to a neutral ground instead of competing with the type */
+  filter: grayscale(1) blur(9px) brightness(0.85);
+  transform: scale(1.06);
+}
+
+.readout:hover dl,
+.readout:focus-within dl,
+.readout:focus dl {
+  opacity: 1;
+}
+
+/* With the scrim carrying the contrast, this is just a touch of separation —
+   a heavier halo here is what made the labels look smudged rather than clean. */
+.readout dt,
+.readout dd,
+.readout a {
+  text-shadow: 0 1px 3px rgba(7, 11, 20, 0.9);
+}
+
+/* Inside this panel the teal is the labels' colour, so links take the same
+   white as the values they sit among — the underline is what marks them as
+   links, and the accent comes back on hover. */
+.readout a {
+  color: var(--ink);
+  text-decoration-color: var(--ink-faint);
+}
+.readout a:hover,
+.readout a:focus-visible {
+  color: var(--signal);
+  text-decoration-color: var(--signal-dim);
 }
 
 .readout:focus { outline: 1px solid var(--signal-dim); outline-offset: 3px; }
@@ -416,6 +466,23 @@ main { padding: 3.5rem 0 6rem; }
     margin: -1.4rem -1.5rem 1.4rem;
     width: calc(100% + 3rem);
     filter: none;
+    transform: none;
+  }
+  /* nothing sits behind the data here, so drop the scrim and the separation */
+  .readout dl {
+    opacity: 1;
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+  .readout dt, .readout dd, .readout a { text-shadow: none; }
+  /* some touch browsers still fire :hover on tap — make sure that can't
+     blur a photo that is now sitting in the flow above the data */
+  .readout:hover .readout-portrait,
+  .readout:focus-within .readout-portrait,
+  .readout:focus .readout-portrait {
+    filter: none;
+    transform: none;
   }
 }
 
