@@ -1,6 +1,6 @@
 // ============================================================
-// Renders the page from SITE_DATA (see data.js) and handles
-// tab switching. No build step — edit data.js and reload.
+// Renders the page from SITE_DATA (see data.js), handles tab
+// switching, the live clock, and the one-time hero animation.
 // ============================================================
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -18,10 +18,6 @@ function el(tag, opts = {}, children = []) {
   return node;
 }
 
-/* ---------- checks whether an asset actually exists ----------
-   Placeholder paths in data.js (e.g. "assets/resume.pdf") won't
-   resolve until you add real files, so media embeds fall back
-   to a plain instruction instead of a broken frame. */
 function assetExists(src) {
   return fetch(src, { method: "HEAD" })
     .then((res) => res.ok)
@@ -31,10 +27,10 @@ function assetExists(src) {
 function renderHero() {
   const p = SITE_DATA.profile;
   $("#siteMark").textContent = p.name;
-  $("#heroName").textContent = p.name;
-  $("#heroRole").textContent = p.role;
+  $("#heroRole").textContent = p.role.toLowerCase();
   $("#heroTagline").textContent = p.tagline;
   $("#metaLocation").textContent = p.location;
+  $("#metaStatus").textContent = p.status || "—";
   $("#metaEmail").textContent = p.email;
   $("#metaEmail").href = "mailto:" + p.email;
 
@@ -45,18 +41,57 @@ function renderHero() {
     ]));
   });
 
-  // origin story: blank-line-separated paragraphs
   const originEl = $("#originText");
   p.origin.trim().split(/\n\s*\n/).forEach((para) => {
     originEl.appendChild(el("p", { text: para.trim() }));
   });
 
-  // contact tab reuses the same links + tagline
   $("#contactLine").textContent = `Based in ${p.location}. ${p.tagline}`;
   const contactLinks = $("#contactLinks");
   contactLinks.appendChild(el("a", { href: "mailto:" + p.email, text: p.email }));
   p.links.forEach((link) => {
     contactLinks.appendChild(el("a", { href: link.url, text: link.label, target: "_blank", rel: "noopener" }));
+  });
+
+  animateHeroName(p.name);
+}
+
+/* One-time "settling" reveal for the name — the single orchestrated
+   motion moment on the page. Characters briefly cycle through a few
+   glyphs before landing on the real letter, left to right. */
+function animateHeroName(name) {
+  const heading = $("#heroName");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    heading.textContent = name;
+    return;
+  }
+
+  const glyphs = "!<>-_\\/[]{}—=+*^?#";
+  const chars = name.split("");
+  heading.innerHTML = "";
+  const spans = chars.map((ch) => {
+    const span = el("span", { class: "char", text: ch === " " ? "\u00A0" : ch });
+    heading.appendChild(span);
+    return span;
+  });
+
+  spans.forEach((span, i) => {
+    const finalChar = chars[i];
+    if (finalChar === " ") return;
+    let ticks = 0;
+    const maxTicks = 5 + Math.floor(Math.random() * 4);
+    const delay = i * 35;
+    setTimeout(() => {
+      const interval = setInterval(() => {
+        ticks += 1;
+        if (ticks >= maxTicks) {
+          span.textContent = finalChar;
+          clearInterval(interval);
+        } else {
+          span.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+        }
+      }, 28);
+    }, delay);
   });
 }
 
@@ -73,7 +108,6 @@ function renderSkills() {
   });
 }
 
-/* Builds the media embed for a project: pdf / video / image / none */
 function buildMediaFrame(media) {
   if (!media || media.type === "none") return null;
 
@@ -124,6 +158,7 @@ function renderProjects() {
     );
 
     const body = el("div", {}, [
+      el("div", { class: "project-meta" }, [document.createTextNode(proj.period)]),
       el("h3", { text: proj.title }),
       el("p", { class: "summary", text: proj.summary }),
       chipRow,
@@ -133,12 +168,7 @@ function renderProjects() {
     const mediaFrame = buildMediaFrame(proj.media);
     if (mediaFrame) body.appendChild(mediaFrame);
 
-    list.appendChild(el("div", { class: "project" }, [
-      el("div", { class: "project-meta" }, [
-        el("span", { class: "period", text: proj.period })
-      ]),
-      body
-    ]));
+    list.appendChild(el("div", { class: "project" }, [body]));
   });
 }
 
@@ -153,8 +183,15 @@ function renderHobbies() {
 }
 
 /* ---------- tabs ---------- */
+function moveIndicator(btn) {
+  const indicator = $("#tabIndicator");
+  if (!indicator || !btn) return;
+  indicator.style.left = btn.offsetLeft + "px";
+  indicator.style.width = btn.offsetWidth + "px";
+}
+
 function showTab(name) {
-  $$(".panel").forEach((p) => p.classList.remove("is-active"));
+  $$(".panel-section").forEach((p) => p.classList.remove("is-active"));
   $$("[role=tab]").forEach((b) => b.setAttribute("aria-selected", "false"));
 
   const panel = $(`#panel-${name}`);
@@ -163,6 +200,7 @@ function showTab(name) {
 
   panel.classList.add("is-active");
   btn.setAttribute("aria-selected", "true");
+  moveIndicator(btn);
   history.replaceState(null, "", `#${name}`);
 }
 
@@ -178,6 +216,23 @@ function initTabs() {
   const initial = (location.hash || "#about").slice(1);
   const valid = ["about", "projects", "hobbies", "contact"].includes(initial) ? initial : "about";
   showTab(valid);
+
+  // fonts loading can shift tab widths after first paint — resnap once they're ready
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => moveIndicator($('[aria-selected="true"]')));
+  }
+  window.addEventListener("resize", () => moveIndicator($('[aria-selected="true"]')));
+}
+
+/* ---------- live clock ---------- */
+function startClock() {
+  const clockEl = $("#clock");
+  const fmt = new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+  });
+  const tick = () => { clockEl.textContent = fmt.format(new Date()); };
+  tick();
+  setInterval(tick, 1000);
 }
 
 renderHero();
@@ -185,3 +240,4 @@ renderSkills();
 renderProjects();
 renderHobbies();
 initTabs();
+startClock();

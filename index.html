@@ -8,7 +8,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -16,35 +16,41 @@
 
 <header class="site-header">
   <div class="wrap">
-    <a href="#about" class="site-mark" id="siteMark">Alex Rivera</a>
-    <nav class="tabs" role="tablist" aria-label="Site sections">
-      <button role="tab" data-tab="about" aria-selected="true">About</button>
-      <button role="tab" data-tab="projects" aria-selected="false">Projects</button>
-      <button role="tab" data-tab="hobbies" aria-selected="false">Hobbies &amp; Learning</button>
-      <button role="tab" data-tab="contact" aria-selected="false">Contact</button>
-    </nav>
+    <div class="header-left">
+      <span class="status-dot" aria-hidden="true"></span>
+      <a href="#about" class="site-mark" id="siteMark">Alex Rivera</a>
+    </div>
+    <div class="header-right">
+      <span class="clock" id="clock" aria-label="Local time"></span>
+      <nav class="tabs" role="tablist" aria-label="Site sections">
+        <button role="tab" data-tab="about" aria-selected="true">About</button>
+        <button role="tab" data-tab="projects" aria-selected="false">Projects</button>
+        <button role="tab" data-tab="hobbies" aria-selected="false">Hobbies &amp; Learning</button>
+        <button role="tab" data-tab="contact" aria-selected="false">Contact</button>
+        <span class="tab-indicator" id="tabIndicator" aria-hidden="true"></span>
+      </nav>
+    </div>
   </div>
 </header>
 
 <main class="wrap">
 
   <!-- ABOUT -->
-  <section id="panel-about" class="panel" role="tabpanel">
+  <section id="panel-about" class="panel-section" role="tabpanel">
     <div class="hero">
       <div>
-        <h1 id="heroName">Alex Rivera</h1>
-        <p class="role" id="heroRole">Software Engineer</p>
-        <p class="tagline" id="heroTagline">I build backend systems and developer tools, and I like taking things apart to see how they actually work.</p>
-        <svg class="hero-underline" viewBox="0 0 84 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M2 7 C 20 2, 30 2, 42 5 S 64 8, 82 4" stroke="var(--signal)" stroke-width="2.5" stroke-linecap="round"/>
-        </svg>
+        <h1 class="hero-name" id="heroName">Alex Rivera</h1>
+        <p class="role" id="heroRole">software engineer</p>
+        <p class="tagline" id="heroTagline"></p>
       </div>
-      <dl class="margin-card">
-        <dt>Location</dt>
-        <dd id="metaLocation">Austin, TX</dd>
-        <dt>Email</dt>
-        <dd><a id="metaEmail" href="#">alex@example.com</a></dd>
-        <dt>Elsewhere</dt>
+      <dl class="readout">
+        <dt>location</dt>
+        <dd id="metaLocation"></dd>
+        <dt>status</dt>
+        <dd id="metaStatus"></dd>
+        <dt>contact</dt>
+        <dd><a id="metaEmail" href="#"></a></dd>
+        <dt>elsewhere</dt>
         <dd><ul id="metaLinks"></ul></dd>
       </dl>
     </div>
@@ -56,22 +62,22 @@
   </section>
 
   <!-- PROJECTS -->
-  <section id="panel-projects" class="panel" role="tabpanel">
+  <section id="panel-projects" class="panel-section" role="tabpanel">
     <h2 class="section-heading">Projects</h2>
     <div id="projectsList"></div>
   </section>
 
   <!-- HOBBIES -->
-  <section id="panel-hobbies" class="panel" role="tabpanel">
+  <section id="panel-hobbies" class="panel-section" role="tabpanel">
     <h2 class="section-heading">Hobbies &amp; things I'm learning</h2>
     <div class="hobbies-grid" id="hobbiesGrid"></div>
   </section>
 
   <!-- CONTACT -->
-  <section id="panel-contact" class="panel" role="tabpanel">
+  <section id="panel-contact" class="panel-section" role="tabpanel">
     <h2 class="section-heading">Contact</h2>
     <div class="contact">
-      <p id="contactLine">Reach out — I'm happy to hear from you.</p>
+      <p id="contactLine"></p>
       <div class="contact-links" id="contactLinks"></div>
     </div>
   </section>

@@ -15,6 +15,7 @@ const SITE_DATA = {
     tagline: "I build backend systems and developer tools, and I like taking things apart to see how they actually work.",
     location: "Austin, TX",
     email: "alex@example.com",
+    status: "Currently deep in distributed systems and developer tooling.",
 
     links: [
       { label: "GitHub", url: "https://github.com/yourhandle" },
