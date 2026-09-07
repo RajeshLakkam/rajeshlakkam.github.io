@@ -166,12 +166,13 @@ nav.tabs {
   position: relative;
 }
 
-nav.tabs button {
+nav.tabs a {
   font-family: var(--font-body);
   font-size: 0.92rem;
   background: none;
   border: none;
   color: var(--ink-dim);
+  text-decoration: none;
   padding: 0.3rem 0;
   cursor: pointer;
   white-space: nowrap;
@@ -179,14 +180,14 @@ nav.tabs button {
   transition: color 0.25s var(--ease-soft);
 }
 
-nav.tabs button:hover { color: var(--ink); }
+nav.tabs a:hover { color: var(--ink); }
 
-nav.tabs button[aria-selected="true"] {
+nav.tabs a[aria-current="true"] {
   color: var(--ink);
 }
 
-/* single indicator that slides between tabs instead of an instant
-   underline swap — positioned by JS via getBoundingClientRect */
+/* single indicator that slides between sections instead of an instant
+   underline swap — positioned by JS as you scroll */
 .tab-indicator {
   position: absolute;
   bottom: -1px;
@@ -196,14 +197,53 @@ nav.tabs button[aria-selected="true"] {
   transition: left 0.4s var(--ease), width 0.4s var(--ease);
 }
 
+/* Not a tab — it opens the blog drawer rather than swapping panels, so it is
+   deliberately set in mono to read as a different kind of control. */
+.nav-blogs {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  padding: 0.3rem 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.25s var(--ease-soft);
+}
+.nav-blogs:hover { color: var(--signal); }
+
 main { padding: 3.5rem 0 6rem; }
 
-.panel-section { display: none; }
-.panel-section.is-active { display: block; animation: panelIn 0.55s var(--ease) both; }
+/* Every section is on the page at once; the nav scrolls to them rather than
+   swapping them in. scroll-margin-top keeps a target clear of the sticky
+   header when you land on it. */
+.panel-section {
+  display: block;
+  scroll-margin-top: 6rem;
+}
 
-@keyframes panelIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+.panel-section + .panel-section {
+  margin-top: 5rem;
+  padding-top: 4rem;
+  border-top: 1px solid var(--line);
+}
+
+/* Sections below the fold settle in as they come into view — the same motion
+   the tabs used to play on switch, now tied to scroll position. The hero keeps
+   its own boot sequence and is never given .reveal. */
+.panel-section.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  will-change: opacity, transform;
+}
+.panel-section.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-section.reveal { opacity: 1; transform: none; transition: none; }
 }
 
 /* ============================================================
@@ -310,6 +350,8 @@ main { padding: 3.5rem 0 6rem; }
   to   { opacity: 1; transform: translateX(0); }
 }
 
+.readout dl { margin: 0; }
+
 .readout dt {
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -325,6 +367,57 @@ main { padding: 3.5rem 0 6rem; }
 }
 .readout ul { list-style: none; margin: 0.2rem 0 0; padding: 0; }
 .readout li { margin-top: 0.25rem; }
+
+/* The portrait sits over the telemetry panel and lifts away on hover, so the
+   photo is the first thing you see and the data is what you get when you reach
+   for it. Nothing is lost if you never hover — the same email and links are
+   rendered again under the Contact tab. */
+.readout { isolation: isolate; }
+
+.readout-portrait {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* nudged toward the panel's own palette so it sits in the theme rather than
+     on top of it; both corrections drop away on reveal */
+  filter: grayscale(1) contrast(1.05) brightness(0.92);
+  transition:
+    opacity 0.5s var(--ease),
+    filter 0.5s var(--ease),
+    transform 0.5s var(--ease);
+}
+
+/* keep the reticle corners on top of the photo — they frame both states */
+.readout::before, .readout::after { z-index: 2; }
+
+.readout:hover .readout-portrait,
+.readout:focus-within .readout-portrait,
+.readout:focus .readout-portrait {
+  opacity: 0;
+  filter: grayscale(0);
+  transform: scale(1.03);
+  pointer-events: none;
+}
+
+.readout:focus { outline: 1px solid var(--signal-dim); outline-offset: 3px; }
+
+/* On touch there is no hover to reveal with, so show the panel and let the
+   portrait sit above it in the flow instead of covering it. */
+@media (hover: none) {
+  .readout-portrait {
+    position: relative;
+    inset: auto;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    margin: -1.4rem -1.5rem 1.4rem;
+    width: calc(100% + 3rem);
+    filter: none;
+  }
+}
 
 .origin {
   max-width: var(--measure);

@@ -182,46 +182,111 @@ function renderHobbies() {
   });
 }
 
-/* ---------- tabs ---------- */
-function moveIndicator(btn) {
+/* ---------- section nav ----------
+   All four sections are on the page at once. The nav is plain anchors —
+   scrolling is the browser's job (html { scroll-behavior: smooth }), so it
+   still works with JS off. What's left for us is keeping the indicator on
+   whichever section you're actually looking at. */
+function moveIndicator(link) {
   const indicator = $("#tabIndicator");
-  if (!indicator || !btn) return;
-  indicator.style.left = btn.offsetLeft + "px";
-  indicator.style.width = btn.offsetWidth + "px";
+  if (!indicator || !link) return;
+  indicator.style.left = link.offsetLeft + "px";
+  indicator.style.width = link.offsetWidth + "px";
 }
 
-function showTab(name) {
-  $$(".panel-section").forEach((p) => p.classList.remove("is-active"));
-  $$("[role=tab]").forEach((b) => b.setAttribute("aria-selected", "false"));
+function setActiveNav(id) {
+  const link = $(`[data-nav="${id.replace("panel-", "")}"]`);
+  if (!link || link.getAttribute("aria-current") === "true") return;
 
-  const panel = $(`#panel-${name}`);
-  const btn = $(`[data-tab="${name}"]`);
-  if (!panel || !btn) return;
+  $$("[data-nav]").forEach((a) => a.setAttribute("aria-current", "false"));
+  link.setAttribute("aria-current", "true");
+  moveIndicator(link);
 
-  panel.classList.add("is-active");
-  btn.setAttribute("aria-selected", "true");
-  moveIndicator(btn);
-  history.replaceState(null, "", `#${name}`);
+  if (location.hash !== `#${id}`) history.replaceState(null, "", `#${id}`);
 }
 
-function initTabs() {
-  $$("[role=tab]").forEach((btn) => {
-    btn.addEventListener("click", () => showTab(btn.dataset.tab));
-  });
-  $("#siteMark").addEventListener("click", (e) => {
-    e.preventDefault();
-    showTab("about");
-  });
+function initNav() {
+  const sections = $$(".panel-section");
+  if (!sections.length) return;
 
-  const initial = (location.hash || "#about").slice(1);
-  const valid = ["about", "projects", "hobbies", "contact"].includes(initial) ? initial : "about";
-  showTab(valid);
+  // the site mark scrolls home rather than jumping
+  $("#siteMark").setAttribute("href", "#" + sections[0].id);
 
-  // fonts loading can shift tab widths after first paint — resnap once they're ready
+  /* A section counts as "current" while it crosses a band under the header.
+     Several can qualify at once mid-scroll, so we always take the topmost in
+     document order — that matches what reads as the section you're in. */
+  const inBand = new Set();
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) inBand.add(e.target);
+      else inBand.delete(e.target);
+    });
+    const current = sections.find((s) => inBand.has(s));
+    if (current) setActiveNav(current.id);
+  }, { rootMargin: "-15% 0px -55% 0px", threshold: 0 });
+
+  sections.forEach((s) => spy.observe(s));
+
+  /* A short last section can sit entirely below the band and never light up,
+     so the bottom of the page always claims the last nav item. */
+  window.addEventListener("scroll", () => {
+    const atBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 2;
+    if (atBottom) setActiveNav(sections[sections.length - 1].id);
+  }, { passive: true });
+
+  setActiveNav((location.hash || "#" + sections[0].id).slice(1));
+  // About already carries aria-current in the markup, so setActiveNav short-
+  // circuits on a default load — place the indicator once, unconditionally.
+  moveIndicator($('[aria-current="true"]'));
+
+  // fonts loading can shift nav widths after first paint — resnap once ready
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => moveIndicator($('[aria-selected="true"]')));
+    document.fonts.ready.then(() => moveIndicator($('[aria-current="true"]')));
   }
-  window.addEventListener("resize", () => moveIndicator($('[aria-selected="true"]')));
+  window.addEventListener("resize", () => moveIndicator($('[aria-current="true"]')));
+}
+
+/* ---------- reveal on scroll ----------
+   The motion the tabs used to play on switch, now tied to scroll position.
+   The hero is skipped — it has its own boot sequence on load. */
+function initReveal() {
+  const sections = $$(".panel-section").slice(1);
+  if (!sections.length) return;
+
+  if (!("IntersectionObserver" in window)) return;
+
+  sections.forEach((s) => s.classList.add("reveal"));
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("is-visible");
+      io.unobserve(e.target);   // one-time settle, not a re-trigger on every pass
+    });
+  }, { rootMargin: "0px 0px -12% 0px", threshold: 0.05 });
+
+  sections.forEach((s) => io.observe(s));
+}
+
+/* ---------- hero portrait ----------
+   The portrait sits on top of the readout panel and lifts away on hover or
+   keyboard focus. If the file isn't there yet, drop it so the panel just
+   renders as it always did rather than showing a broken image. */
+function initPortrait() {
+  const portrait = $("#readoutPortrait");
+  if (!portrait) return;
+  portrait.addEventListener("error", () => portrait.remove());
+}
+
+/* ---------- blog drawer ----------
+   The widget itself is defined in blog-drawer.js and listens on the document,
+   so all the page has to do is announce the intent. */
+function initBlogsLink() {
+  const btn = $("#navBlogs");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    document.dispatchEvent(new CustomEvent("open-blog-drawer"));
+  });
 }
 
 /* ---------- live clock ---------- */
@@ -239,5 +304,8 @@ renderHero();
 renderSkills();
 renderProjects();
 renderHobbies();
-initTabs();
+initNav();
+initReveal();
+initPortrait();
+initBlogsLink();
 startClock();

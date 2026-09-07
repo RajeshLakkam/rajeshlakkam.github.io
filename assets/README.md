@@ -1,6 +1,7 @@
 Put your files here.
 
 - `resume.pdf` — referenced by the "Résumé (PDF)" link in data.js
+- `portrait.jpg` — your photo; covers the hero readout panel until it is hovered
 - `projects/<name>.pdf` — a project writeup, embedded inline on that project's card
 - `projects/<name>.mp4` — a demo video, embedded inline with playback controls
 - `projects/<name>.jpg` — a screenshot

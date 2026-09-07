@@ -18,17 +18,18 @@
   <div class="wrap">
     <div class="header-left">
       <span class="status-dot" aria-hidden="true"></span>
-      <a href="#about" class="site-mark" id="siteMark">Alex Rivera</a>
+      <a href="#panel-about" class="site-mark" id="siteMark">Alex Rivera</a>
     </div>
     <div class="header-right">
       <span class="clock" id="clock" aria-label="Local time"></span>
-      <nav class="tabs" role="tablist" aria-label="Site sections">
-        <button role="tab" data-tab="about" aria-selected="true">About</button>
-        <button role="tab" data-tab="projects" aria-selected="false">Projects</button>
-        <button role="tab" data-tab="hobbies" aria-selected="false">Hobbies &amp; Learning</button>
-        <button role="tab" data-tab="contact" aria-selected="false">Contact</button>
+      <nav class="tabs" aria-label="Site sections">
+        <a href="#panel-about" data-nav="about" aria-current="true">About</a>
+        <a href="#panel-projects" data-nav="projects">Projects</a>
+        <a href="#panel-hobbies" data-nav="hobbies">Hobbies &amp; Learning</a>
+        <a href="#panel-contact" data-nav="contact">Contact</a>
         <span class="tab-indicator" id="tabIndicator" aria-hidden="true"></span>
       </nav>
+      <button class="nav-blogs" id="navBlogs" type="button">Blogs</button>
     </div>
   </div>
 </header>
@@ -36,23 +37,26 @@
 <main class="wrap">
 
   <!-- ABOUT -->
-  <section id="panel-about" class="panel-section" role="tabpanel">
+  <section id="panel-about" class="panel-section" aria-label="About">
     <div class="hero">
       <div>
         <h1 class="hero-name" id="heroName">Alex Rivera</h1>
         <p class="role" id="heroRole">software engineer</p>
         <p class="tagline" id="heroTagline"></p>
       </div>
-      <dl class="readout">
-        <dt>location</dt>
-        <dd id="metaLocation"></dd>
-        <dt>status</dt>
-        <dd id="metaStatus"></dd>
-        <dt>contact</dt>
-        <dd><a id="metaEmail" href="#"></a></dd>
-        <dt>elsewhere</dt>
-        <dd><ul id="metaLinks"></ul></dd>
-      </dl>
+      <div class="readout" id="readout" tabindex="0">
+        <img class="readout-portrait" id="readoutPortrait" src="assets/portrait.jpg" alt="Portrait of Alex Rivera">
+        <dl>
+          <dt>location</dt>
+          <dd id="metaLocation"></dd>
+          <dt>status</dt>
+          <dd id="metaStatus"></dd>
+          <dt>contact</dt>
+          <dd><a id="metaEmail" href="#"></a></dd>
+          <dt>elsewhere</dt>
+          <dd><ul id="metaLinks"></ul></dd>
+        </dl>
+      </div>
     </div>
 
     <div class="origin" id="originText"></div>
@@ -62,19 +66,19 @@
   </section>
 
   <!-- PROJECTS -->
-  <section id="panel-projects" class="panel-section" role="tabpanel">
+  <section id="panel-projects" class="panel-section" aria-label="Projects">
     <h2 class="section-heading">Projects</h2>
     <div id="projectsList"></div>
   </section>
 
   <!-- HOBBIES -->
-  <section id="panel-hobbies" class="panel-section" role="tabpanel">
+  <section id="panel-hobbies" class="panel-section" aria-label="Hobbies and learning">
     <h2 class="section-heading">Hobbies &amp; things I'm learning</h2>
     <div class="hobbies-grid" id="hobbiesGrid"></div>
   </section>
 
   <!-- CONTACT -->
-  <section id="panel-contact" class="panel-section" role="tabpanel">
+  <section id="panel-contact" class="panel-section" aria-label="Contact">
     <h2 class="section-heading">Contact</h2>
     <div class="contact">
       <p id="contactLine"></p>
@@ -88,7 +92,10 @@
   <span id="footerNote">Built with plain HTML, CSS, and JS — hosted on GitHub Pages.</span>
 </footer>
 
+<blog-drawer></blog-drawer>
+
 <script src="data.js"></script>
 <script src="script.js"></script>
+<script src="blog-drawer.js"></script>
 </body>
 </html>

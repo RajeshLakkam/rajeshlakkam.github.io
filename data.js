@@ -10,16 +10,16 @@
 
 const SITE_DATA = {
   profile: {
-    name: "Alex Rivera",
+    name: "Rajesh Lakkam",
     role: "Software Engineer",
-    tagline: "I build backend systems and developer tools, and I like taking things apart to see how they actually work.",
-    location: "Austin, TX",
-    email: "alex@example.com",
-    status: "Currently deep in distributed systems and developer tooling.",
+    tagline: "I like taking things apart to see how they actually work.",
+    location: "Bengaluru, Karnataka",
+    email: "rajesh.lakkam327@gmail.com",
+    status: "building enterprise software",
 
     links: [
-      { label: "GitHub", url: "https://github.com/yourhandle" },
-      { label: "LinkedIn", url: "https://linkedin.com/in/yourhandle" },
+      { label: "GitHub", url: "https://github.com/RajeshLakkam" },
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/rajesh-lakkam/" },
       { label: "Résumé (PDF)", url: "assets/resume.pdf" }
     ],
 
@@ -38,10 +38,54 @@ Outside of work I'm usually pulling something apart to understand it,
 which is as true of my hobbies as it is of my job.`
   },
 
+  // Grouped so the strongest, most current work (Google Cloud, Spring) reads
+  // first and the older .NET/front-end work sits further down. The grid is
+  // auto-fit, so adding or removing a group reflows without touching the CSS.
   skills: [
-    { group: "Languages", items: ["Python", "TypeScript", "Go", "SQL"] },
-    { group: "Tools & platforms", items: ["Docker", "AWS", "PostgreSQL", "Kafka"] },
-    { group: "Areas", items: ["Distributed systems", "API design", "Data pipelines"] }
+    {
+      group: "Languages",
+      items: ["Java", "TypeScript", "JavaScript", "SQL", "C#"]
+    },
+    {
+      group: "Google Cloud",
+      items: [
+        "Google Cloud Platform", "Cloud Run", "Kubernetes Engine (GKE)",
+        "Pub/Sub", "Dataflow", "Cloud Storage", "IAM", "Gemini"
+      ]
+    },
+    {
+      group: "Backend & APIs",
+      items: [
+        "Spring Boot", "Spring MVC", "Spring Security", "Spring Data",
+        "Hibernate", "MySQL", "REST APIs", "OpenAPI"
+      ]
+    },
+    {
+      group: "Architecture",
+      items: [
+        "Microservices", "Event-driven architecture", "Cloud-native applications",
+        "Scalability", "Software design"
+      ]
+    },
+    {
+      group: "Testing & quality",
+      items: [
+        "JUnit", "Test-driven development", "Unit testing",
+        "Integration testing", "Code coverage", "Postman"
+      ]
+    },
+    {
+      group: "Build & delivery",
+      items: ["Git", "Maven", "Docker", "CI/CD", "DevOps", "Microsoft Azure"]
+    },
+    {
+      group: "Front-end",
+      items: ["Angular", "HTML", "CSS", "Bootstrap"]
+    },
+    {
+      group: "Also worked with",
+      items: [".NET Framework", "ASP.NET"]
+    }
   ],
 
   projects: [
@@ -92,5 +136,37 @@ which is as true of my hobbies as it is of my job.`
       title: "Old radios",
       note: "Restoring vacuum-tube radios from the 1950s, one bad capacitor at a time."
     }
+  ],
+
+  // Shown in the <blog-drawer> widget pinned to the bottom-right of the page.
+  blogs: [
+    {
+      title: "Designing Data-Intensive Applications, revisited",
+      source: "martin.kleppmann.com",
+      url: "https://martin.kleppmann.com/",
+      note: "The chapter on consensus is the one I keep coming back to."
+    },
+    {
+      title: "Notes on Distributed Systems for Young Bloods",
+      source: "somethingsimilar.com",
+      url: "https://www.somethingsimilar.com/2013/01/14/notes-on-distributed-systems-for-young-bloods/",
+      note: "Still the most honest description of what production actually feels like."
+    },
+    {
+      title: "Writing",
+      source: "brandur.org",
+      url: "https://brandur.org/articles",
+      note: "Long-form posts on Postgres and API design, written by someone who ships."
+    },
+    {
+      title: "The Pragmatic Engineer",
+      source: "newsletter.pragmaticengineer.com",
+      url: "https://newsletter.pragmaticengineer.com/",
+      note: "How engineering orgs actually work, minus the LinkedIn gloss."
+    }
   ]
 };
+
+// the <blog-drawer> widget lives in its own file and its own Shadow DOM, so it
+// reads content off the global rather than importing anything from this file.
+window.SITE_DATA = SITE_DATA;
