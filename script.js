@@ -218,15 +218,30 @@ function renderProjects() {
       proj.stack.map((tech) => el("span", { class: "chip", text: tech }))
     );
 
-    /* What stays visible when the card is closed: when, what, and where. That
-       is enough to decide whether to open it, which is the whole point. */
+    /* Closed, a card shows the project and who it was for — nothing else. The
+       period and the seat are still in the header, just hidden until it opens,
+       so opening a card doesn't reflow the two lines you were reading.
+
+       `org` is written "Company · Seat · Seat" in data.js, so the company is
+       the first segment. A string without separators is all company, which is
+       the right answer for an org that is only a name. */
+    const orgParts = proj.org ? proj.org.split("·") : [];
+    const company = (orgParts.shift() || "").trim();
+    const seat = orgParts.join("·").trim();
+
     const head = el("div", { class: "project-head" }, [
       el("div", { class: "project-meta" }, [document.createTextNode(proj.period)]),
       el("h3", { text: proj.title })
     ]);
 
     // Where the work happened, and in what seat — only for the ones that had one.
-    if (proj.org) head.appendChild(el("div", { class: "project-org", text: proj.org }));
+    if (company) {
+      const org = el("div", { class: "project-org" }, [
+        el("span", { class: "project-company", text: company })
+      ]);
+      if (seat) org.appendChild(el("span", { class: "project-seat", text: " · " + seat }));
+      head.appendChild(org);
+    }
 
     const body = el("div", { class: "project-body", id: "project-" + i }, [
       el("p", { class: "summary", text: proj.summary })

@@ -150,7 +150,7 @@ chose along the way.`
     {
       title: "Gift Registry Data Migration & Bi-Directional Sync",
       org: "Kognivera · Senior Software Engineer · Senior Java Resource",
-      period: "May 2024 – Present · Bengaluru",
+      period: "",
       summary: "Moving Gift Registry data off Oracle ATG and onto PostgreSQL without ever taking either system offline. The answer was a real-time, bi-directional sync: whatever is written on one side shows up on the other, so the legacy monolith and the new microservices can both stay live and correct through the whole transition.",
       highlights: [
         "Architected and implemented a bi-directional, real-time data synchronization solution to migrate Gift Registry data from Oracle ATG to PostgreSQL, letting legacy and new microservices run concurrently without data inconsistency.",
@@ -182,7 +182,7 @@ chose along the way.`
     {
       title: "WFE Migration",
       org: "Infosys · Systems Engineer · Java Resource",
-      period: "Oct 2022 – May 2024 · Bengaluru",
+      period: "",
       summary: "A legacy .NET application re-engineered into Spring Boot microservices. The work began with reading the old codebase closely enough to know what its behaviour actually was — not what it was documented to be — then rebuilding it in Java, with the test coverage the original never had.",
       highlights: [
         "Re-engineered a legacy .NET application into Spring Boot microservices, rebuilding the core business logic and exposing RESTful APIs integrated with downstream services.",
@@ -209,7 +209,7 @@ chose along the way.`
     {
       title: "Full-stack engineering training",
       org: "Infosys · Systems Engineer Trainee",
-      period: "Apr 2022 – Oct 2022 · Mysuru",
+      period: "",
       summary: "Infosys' foundation programme — the six months that turned a graduate into someone who could be handed a service and trusted with it.",
       highlights: [
         "Completed intensive full-stack training covering Java, DBMS and Angular.",

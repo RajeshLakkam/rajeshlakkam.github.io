@@ -1013,6 +1013,17 @@ svg.collapse-chevron {
   outline-offset: 2px;
 }
 
+/* A closed card is down to two lines: the project, and who it was for. The
+   period and the seat are display:none rather than removed, so opening one
+   costs no DOM work and the header doesn't rebuild itself mid-animation. */
+.project:not(.is-open) .project-meta,
+.project:not(.is-open) .project-seat { display: none; }
+
+/* with the date gone above it, the title carries the top of the card */
+.project:not(.is-open) h3 { margin-bottom: 0.35rem; }
+
+.project:not(.is-open) .project-org { margin-bottom: 0; }
+
 /* ---------- closed cards ----------
    A closed card would otherwise keep the full 2.75rem of timeline gutter meant
    to separate a card's body from the next card's marker. */
