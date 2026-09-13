@@ -938,33 +938,7 @@ i.cert-icon {
 /* the clipping happens here, not on the grid row itself */
 .collapse-inner { overflow: hidden; }
 
-/* ---------- heading toggles ----------
-   The button fills the heading so the whole line is the hit target, and
-   inherits type from it so nothing about the heading's look changes. */
-.collapse-toggle {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  padding: 0;
-  background: none;
-  border: 0;
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.collapse-toggle:hover .collapse-label { color: var(--signal); }
-
-.collapse-label { transition: color 0.2s var(--ease-soft); }
-
-.collapse-toggle:focus-visible {
-  outline: 1px solid var(--signal);
-  outline-offset: 4px;
-}
-
+/* the one control left: the chevron on each project card header */
 svg.collapse-chevron {
   width: 1.1rem;
   height: 1.1rem;
@@ -1024,21 +998,20 @@ svg.collapse-chevron {
 
 .project:not(.is-open) .project-org { margin-bottom: 0; }
 
-/* ---------- closed cards ----------
-   A closed card would otherwise keep the full 2.75rem of timeline gutter meant
-   to separate a card's body from the next card's marker. */
-.project:not(.is-open) {
-  padding-bottom: 1.4rem;
-  cursor: pointer;
-}
+/* ---------- card hit target ----------
+   The whole card toggles, open or closed, so the pointer is honest in both
+   states. Text inside an open card still selects: the click handler bails on a
+   selection rather than the cursor having to warn anyone off. */
+.project { cursor: pointer; }
 
-/* The whole closed card is the hit target, so it has to look like one. An open
-   card goes back to a text cursor — clicking inside it does nothing, and a
-   pointer there would promise otherwise. */
-.project:not(.is-open):hover h3 { color: var(--signal); }
+/* A closed card would otherwise keep the full 2.75rem of timeline gutter meant
+   to separate a card's body from the next card's marker. */
+.project:not(.is-open) { padding-bottom: 1.4rem; }
+
+.project:hover h3 { color: var(--signal); }
 
 /* the timeline marker already lights on hover; keep the chevron in step */
-.project:not(.is-open):hover svg.collapse-chevron { stroke: var(--signal); }
+.project:hover svg.collapse-chevron { stroke: var(--signal); }
 
 /* Someone who has asked for less motion gets the state change without the
    slide — the region still opens and closes, it just does it at once. */

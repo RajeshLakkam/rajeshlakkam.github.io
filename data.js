@@ -237,7 +237,7 @@ Pub/Sub across the whole application.`,
       }
     },
     {
-      title: "Rise Award, twice",
+      title: "Rise Award",
       org: "Infosys",
       note: `Awarded in two consecutive quarters for contributions to the WFE
 migration project.`
