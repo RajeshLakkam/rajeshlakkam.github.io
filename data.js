@@ -1,17 +1,5 @@
-// ============================================================
-// SITE CONTENT — this is the only file you should need to edit.
-// Everything on the page is generated from the object below.
-//
-// This version is filled with realistic PLACEHOLDER content —
-// including sample PDF, image, and video files under assets/ —
-// so you can see the full site once it's hosted before swapping
-// in your real details. Replace everything here with your own.
-// ============================================================
 
 const SITE_DATA = {
-  // Feature flags. Flip one to false and that section disappears from the
-  // page — nav entry, widget and all — without deleting its content below,
-  // so turning it back on is a one-word change.
   features: {
     blogs: false
   },
@@ -55,12 +43,6 @@ engineers aren't the ones with every answer — they're the ones who know
 chose along the way.`
   },
 
-  // Grouped so the strongest, most current work (Google Cloud, Spring) reads
-  // first and the older .NET/front-end work sits further down. The grid is
-  // auto-fit, so adding or removing a group reflows without touching the CSS.
-  // Each group carries a sprite id; each skill maps to either a Devicon
-  // class (real brand marks) or a sprite id (concepts, which have no logo).
-  // GitHub handle the analytics panel reads from the public API.
   github: "RajeshLakkam",
 
   skillIcons: {
@@ -164,11 +146,6 @@ chose along the way.`
     }
   ],
 
-  /* Real work history, most recent first — the timeline reads top-down, so
-     newest at the top. `org` carries the employer and the seat; `highlights`
-     are what I actually did, kept as a list rather than folded into prose.
-     `media: none` on all of them: none of this work has a public artefact to
-     link, and an empty frame is worse than no frame. */
   projects: [
     {
       title: "Gift Registry Data Migration & Bi-Directional Sync",
@@ -189,7 +166,7 @@ chose along the way.`
     {
       title: "Liverpool Gift Registry",
       org: "Kognivera · Senior Software Engineer · Senior Java Resource",
-      period: "May 2024 – Present · Bengaluru",
+      period: "",
       summary: "A monolithic Oracle ATG Gift Registry service broken out into a distributed microservices architecture — a core component of a high-traffic e-commerce platform handling millions of real-time transactions and events. I built the main services from the ground up and sat between the solution architect and the developers implementing against his decisions.",
       highlights: [
         "Led the migration of a monolithic Oracle ATG Gift Registry service to a distributed microservices architecture, delivering a core component of a platform that handles millions of real-time transactions and events.",
@@ -219,7 +196,7 @@ chose along the way.`
     {
       title: "Mlivr Application",
       org: "Infosys · Systems Engineer · Angular Resource",
-      period: "Oct 2022 – May 2024 · Bengaluru",
+      period: "",
       summary: "Front-end work on Mlivr: building the responsive Angular UI, and the integration layer where those components meet the backend's REST APIs.",
       highlights: [
         "Built responsive Angular UIs and collaborated with backend teams to integrate front-end components with RESTful APIs.",
@@ -244,9 +221,6 @@ chose along the way.`
     }
   ],
 
-  /* Shown under the projects timeline. `note` is the citation — what the
-     recognition was actually for, since the name of an award means nothing
-     to a reader outside the company that gave it. */
   awards: [
     {
       title: "Microservices Maestro",
@@ -270,6 +244,39 @@ migration project.`
     }
   ],
 
+  certifications: [
+    {
+      title: "Professional Cloud Developer",
+      issuer: "Google Cloud",
+      icon: "devicon-googlecloud-plain"
+    },
+    {
+      title: "Certified Java Developer",
+      issuer: "Infosys",
+      icon: "devicon-java-plain"
+    },
+    {
+      title: "Certified Spring Boot Developer",
+      issuer: "Infosys",
+      icon: "devicon-spring-original"
+    },
+    {
+      title: "Azure Fundamentals",
+      issuer: "Microsoft Certified",
+      icon: "devicon-azure-plain"
+    },
+    {
+      title: "Certified Angular Developer",
+      issuer: "Infosys",
+      icon: "devicon-angular-plain"
+    },
+    {
+      title: "Certified DevOps Professional (Open Source)",
+      issuer: "Infosys",
+      icon: "i-infinity"
+    }
+  ],
+
   hobbies: [
     {
       title: "Mechanical keyboards",
@@ -285,7 +292,6 @@ migration project.`
     }
   ],
 
-  // Shown in the <blog-drawer> widget pinned to the bottom-right of the page.
   blogs: [
     {
       title: "Designing Data-Intensive Applications, revisited",
@@ -313,7 +319,4 @@ migration project.`
     }
   ]
 };
-
-// the <blog-drawer> widget lives in its own file and its own Shadow DOM, so it
-// reads content off the global rather than importing anything from this file.
 window.SITE_DATA = SITE_DATA;

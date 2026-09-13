@@ -862,6 +862,180 @@ svg.award-icon {
   color: var(--ink-faint);
 }
 
+/* ---------- certifications ----------
+   Flatter than the award cards deliberately: awards carry a citation worth
+   reading, certifications carry a name. Two columns on desktop so six of them
+   read as a short list rather than a long scroll. */
+.certs-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  max-width: var(--measure);
+}
+
+.cert {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.85rem 1rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.cert-icon {
+  color: var(--signal);
+  flex-shrink: 0;
+}
+
+svg.cert-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+/* Devicon glyphs are font characters, so they size by font-size, not by box. */
+i.cert-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+  font-style: normal;
+}
+
+.cert-body { min-width: 0; }
+
+.cert-body h3 {
+  font-size: 0.94rem;
+  font-weight: 500;
+  margin: 0 0 0.15rem;
+  color: var(--ink);
+}
+
+.cert-issuer {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+/* ============================================================
+   COLLAPSIBLE REGIONS
+   ============================================================ */
+
+/* The 0fr → 1fr grid trick: the row animates to the content's real height, so
+   nothing needs a guessed max-height that a long section would overflow. */
+.collapse {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.32s var(--ease-soft);
+}
+
+.collapse.is-collapsed { grid-template-rows: 0fr; }
+
+/* the clipping happens here, not on the grid row itself */
+.collapse-inner { overflow: hidden; }
+
+/* ---------- heading toggles ----------
+   The button fills the heading so the whole line is the hit target, and
+   inherits type from it so nothing about the heading's look changes. */
+.collapse-toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.collapse-toggle:hover .collapse-label { color: var(--signal); }
+
+.collapse-label { transition: color 0.2s var(--ease-soft); }
+
+.collapse-toggle:focus-visible {
+  outline: 1px solid var(--signal);
+  outline-offset: 4px;
+}
+
+svg.collapse-chevron {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--signal);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.32s var(--ease-soft);
+}
+
+/* points down when open, right when closed — the arrow shows where the
+   content went, not where clicking will take you */
+[aria-expanded="false"] svg.collapse-chevron { transform: rotate(-90deg); }
+
+/* ---------- project cards ----------
+   The header stays put when the body collapses: period, title and org are
+   what you scan by, so they are never the thing that gets hidden. */
+.project-head {
+  position: relative;
+  padding-right: 2.25rem;
+}
+
+.project-toggle {
+  position: absolute;
+  top: -2px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease-soft);
+}
+
+.project-toggle:hover { border-color: var(--line); }
+
+.project-toggle:focus-visible {
+  outline: 1px solid var(--signal);
+  outline-offset: 2px;
+}
+
+/* ---------- closed cards ----------
+   A closed card would otherwise keep the full 2.75rem of timeline gutter meant
+   to separate a card's body from the next card's marker. */
+.project:not(.is-open) {
+  padding-bottom: 1.4rem;
+  cursor: pointer;
+}
+
+/* The whole closed card is the hit target, so it has to look like one. An open
+   card goes back to a text cursor — clicking inside it does nothing, and a
+   pointer there would promise otherwise. */
+.project:not(.is-open):hover h3 { color: var(--signal); }
+
+/* the timeline marker already lights on hover; keep the chevron in step */
+.project:not(.is-open):hover svg.collapse-chevron { stroke: var(--signal); }
+
+/* Someone who has asked for less motion gets the state change without the
+   slide — the region still opens and closes, it just does it at once. */
+@media (prefers-reduced-motion: reduce) {
+  .collapse,
+  svg.collapse-chevron { transition: none; }
+}
+
 .hobbies-grid {
   display: grid;
   gap: 1.9rem;

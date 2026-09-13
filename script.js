@@ -207,22 +207,30 @@ function buildMediaFrame(media) {
   return frame;
 }
 
+/* Every card, so the click controller below can close the ones you didn't
+   click. Filled by renderProjects, read by initProjectCards. */
+const projectCards = [];
+
 function renderProjects() {
   const list = $("#projectsList");
-  SITE_DATA.projects.forEach((proj) => {
+  SITE_DATA.projects.forEach((proj, i) => {
     const chipRow = el("div", { class: "chip-row" },
       proj.stack.map((tech) => el("span", { class: "chip", text: tech }))
     );
 
-    const body = el("div", {}, [
+    /* What stays visible when the card is closed: when, what, and where. That
+       is enough to decide whether to open it, which is the whole point. */
+    const head = el("div", { class: "project-head" }, [
       el("div", { class: "project-meta" }, [document.createTextNode(proj.period)]),
       el("h3", { text: proj.title })
     ]);
 
     // Where the work happened, and in what seat — only for the ones that had one.
-    if (proj.org) body.appendChild(el("div", { class: "project-org", text: proj.org }));
+    if (proj.org) head.appendChild(el("div", { class: "project-org", text: proj.org }));
 
-    body.appendChild(el("p", { class: "summary", text: proj.summary }));
+    const body = el("div", { class: "project-body", id: "project-" + i }, [
+      el("p", { class: "summary", text: proj.summary })
+    ]);
 
     /* The summary says what the project was; these say what I did on it.
        A list, because that's the shape of the information — flattening six
@@ -245,7 +253,72 @@ function renderProjects() {
     const mediaFrame = buildMediaFrame(proj.media);
     if (mediaFrame) body.appendChild(mediaFrame);
 
-    list.appendChild(el("div", { class: "project" }, [body]));
+    const card = el("div", { class: "project" }, [head, body]);
+    list.appendChild(card);
+
+    /* Cards start closed: five open ones make the timeline a page of prose you
+       have to scroll past, and the point of the list is to scan it first.
+       Wrapped here rather than in initCollapsibles because the control is a
+       built header, not the heading-plus-region pairing the markup uses. */
+    const shell = makeCollapsible(body, false);
+    const btn = el("button", {
+      class: "project-toggle",
+      type: "button",
+      "aria-expanded": "false",
+      "aria-controls": shell.id,
+      "aria-label": "Expand " + proj.title
+    }, [spriteIcon("i-chevron", "collapse-chevron")]);
+
+    head.appendChild(btn);
+    projectCards.push({ card, shell, btn, title: proj.title, open: false });
+  });
+}
+
+/* ---------- project open/close ----------
+   One listener on the document rather than one per card: a click either lands
+   inside a card or it doesn't, and "outside" includes every other card, so the
+   same handler gives click-to-open, click-away-to-close, and one-open-at-a-time
+   without any of them being special-cased.
+
+   The chevron stays a real button — it is the keyboard path in, and a bare
+   clickable div is not. Its Enter/Space also arrives here as a click, so the
+   two routes share one code path instead of racing each other. */
+function setProjectOpen(entry, open) {
+  if (entry.open === open) return;
+  entry.open = open;
+  entry.card.classList.toggle("is-open", open);
+  entry.btn.setAttribute("aria-expanded", String(open));
+  entry.btn.setAttribute("aria-label", (open ? "Collapse " : "Expand ") + entry.title);
+  setCollapsed(entry.shell, !open, false);
+}
+
+function initProjectCards() {
+  if (!projectCards.length) return;
+
+  document.addEventListener("click", (e) => {
+    const card = e.target.closest(".project");
+    const onToggle = e.target.closest(".project-toggle");
+
+    // anything that isn't the card you clicked closes, this one included if
+    // you clicked nothing at all
+    projectCards.forEach((entry) => {
+      if (entry.card !== card) setProjectOpen(entry, false);
+    });
+    if (!card) return;
+
+    const entry = projectCards.find((x) => x.card === card);
+    if (!entry) return;
+
+    /* Clicking the card opens it and leaves it open — closing is what the
+       click-away is for. The chevron is the exception: it toggles, so there is
+       still a way to shut a card without hunting for empty page to click. */
+    setProjectOpen(entry, onToggle ? !entry.open : true);
+  });
+
+  // Escape is the other way out, for anyone who got here by keyboard
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    projectCards.forEach((entry) => setProjectOpen(entry, false));
   });
 }
 
@@ -284,6 +357,25 @@ function renderAwards() {
     }
 
     list.appendChild(card);
+  });
+}
+
+/* Certifications sit under the awards on the same tab. They are deliberately
+   flatter than an award card — a name, who issued it, and a mark — because
+   there is no story to tell about a certification beyond having earned it. */
+function renderCertifications() {
+  const grid = $("#certsGrid");
+  if (!grid || !SITE_DATA.certifications) return;
+
+  SITE_DATA.certifications.forEach((cert) => {
+    const card = el("div", { class: "cert" });
+    const icon = iconFor(cert.icon, "cert-icon");
+    if (icon) card.appendChild(icon);
+    card.appendChild(el("div", { class: "cert-body" }, [
+      el("h3", { text: cert.title }),
+      el("span", { class: "cert-issuer", text: cert.issuer })
+    ]));
+    grid.appendChild(card);
   });
 }
 
@@ -527,6 +619,99 @@ function setActiveNav(id) {
   if (location.hash !== `#${id}`) history.replaceState(null, "", `#${id}`);
 }
 
+/* ---------- collapsible regions ----------
+   One mechanism, used by the section headings and by each project card.
+
+   The animation is the grid 0fr → 1fr trick rather than max-height: a region
+   animates to its real height without anyone having to guess a pixel ceiling
+   that a long project would silently blow past. The inner wrapper is what
+   clips, so the outer grid row is the only thing being transitioned.
+
+   Collapsing sets hidden on the inner wrapper once the transition ends, so a
+   closed region is genuinely out of the tab order and out of find-in-page —
+   a region that merely has zero height still traps a keyboard user in it. */
+let collapseSeq = 0;
+
+function makeCollapsible(region, expanded) {
+  const inner = el("div", { class: "collapse-inner" });
+  region.parentNode.insertBefore(inner, region);
+  inner.appendChild(region);
+
+  const shell = el("div", { class: "collapse" });
+  inner.parentNode.insertBefore(shell, inner);
+  shell.appendChild(inner);
+
+  shell.id = region.id ? region.id + "-collapse" : "collapse-" + ++collapseSeq;
+  setCollapsed(shell, !expanded, true);
+  return shell;
+}
+
+const REDUCED_MOTION = window.matchMedia
+  && window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function setCollapsed(shell, collapsed, immediate) {
+  const inner = shell.firstElementChild;
+  shell.classList.toggle("is-collapsed", collapsed);
+
+  /* With motion reduced the CSS transition is off, so transitionend never
+     fires and the region would stay focusable at zero height. Same branch as
+     the initial state: hide it outright. */
+  const now = immediate || (REDUCED_MOTION && REDUCED_MOTION.matches);
+
+  if (collapsed) {
+    // hide only once it has finished shrinking, or the region vanishes mid-slide
+    if (now) inner.hidden = true;
+    else shell.addEventListener("transitionend", function done(e) {
+      if (e.target !== shell) return;
+      shell.removeEventListener("transitionend", done);
+      if (shell.classList.contains("is-collapsed")) inner.hidden = true;
+    });
+  } else {
+    inner.hidden = false;
+  }
+}
+
+/* Turns a heading into the control for its region. The heading keeps its
+   heading semantics; the button goes inside it, which is what screen readers
+   expect — a heading that is itself a button announces as neither cleanly. */
+function bindCollapseToggle(heading, shell, expanded) {
+  const label = heading.textContent;
+  heading.textContent = "";
+
+  const btn = el("button", {
+    class: "collapse-toggle",
+    type: "button",
+    "aria-expanded": String(expanded),
+    "aria-controls": shell.id
+  }, [el("span", { class: "collapse-label", text: label })]);
+
+  const chev = spriteIcon("i-chevron", "collapse-chevron");
+  btn.appendChild(chev);
+  heading.appendChild(btn);
+
+  btn.addEventListener("click", () => {
+    const nowExpanded = btn.getAttribute("aria-expanded") !== "true";
+    btn.setAttribute("aria-expanded", String(nowExpanded));
+    setCollapsed(shell, !nowExpanded, false);
+  });
+}
+
+/* Runs after every renderer, so the regions it wraps are already populated.
+   Only the Projects heading opts in (data-collapse in the markup) — collapsing
+   is for the one section long enough to be worth skipping past, and putting a
+   toggle on every heading turned the page into a wall of accordions. The
+   mechanism stays generic: another section opts in with the attribute alone.
+
+   The Projects region starts open; the cards inside it start closed. */
+function initCollapsibles() {
+  $$("[data-collapse]").forEach((heading) => {
+    const region = document.getElementById(heading.dataset.collapse);
+    if (!region) return;
+    const shell = makeCollapsible(region, true);
+    bindCollapseToggle(heading, shell, true);
+  });
+}
+
 function initNav() {
   const sections = $$(".panel-section");
   if (!sections.length) return;
@@ -657,8 +842,11 @@ renderHero();
 renderSkills();
 renderProjects();
 renderAwards();
+renderCertifications();
 renderHobbies();
 renderGitHub();
+initCollapsibles();
+initProjectCards();
 initNav();
 initMobileNav();
 initReveal();
