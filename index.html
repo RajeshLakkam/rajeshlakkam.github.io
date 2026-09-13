@@ -12,9 +12,117 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+<!-- Brand marks for the skills chips. Pinned, not @latest, so an upstream
+     release can never silently change the icons on this page. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.17.0/devicon.min.css">
+
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+<!-- ============================================================
+     Icon sprite. Concepts (microservices, scalability, CI/CD…) have no
+     brand mark, so they get these instead — one stroke weight, one
+     viewBox, currentColor, so they sit beside the Devicon glyphs
+     without looking like a different set.
+     ============================================================ -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-code" viewBox="0 0 24 24">
+    <polyline points="9 7 4 12 9 17"/><polyline points="15 7 20 12 15 17"/>
+  </symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24">
+    <path d="M6.5 18h11a3.5 3.5 0 0 0 .3-7 5.5 5.5 0 0 0-10.7-1.2A4 4 0 0 0 6.5 18Z"/>
+  </symbol>
+  <symbol id="i-server" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="7" rx="1.5"/>
+    <rect x="3" y="13" width="18" height="7" rx="1.5"/>
+    <line x1="6.8" y1="7.5" x2="6.9" y2="7.5"/><line x1="6.8" y1="16.5" x2="6.9" y2="16.5"/>
+  </symbol>
+  <symbol id="i-db" viewBox="0 0 24 24">
+    <ellipse cx="12" cy="6" rx="8" ry="3"/>
+    <path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/>
+    <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>
+  </symbol>
+  <symbol id="i-blocks" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/>
+    <rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>
+  </symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24">
+    <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/>
+  </symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24">
+    <line x1="3" y1="21" x2="21" y2="21"/>
+    <line x1="7" y1="21" x2="7" y2="14"/><line x1="12" y1="21" x2="12" y2="9"/><line x1="17" y1="21" x2="17" y2="4"/>
+  </symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 10.5 10.5 8.5 15.5 13.5 13.5"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9.5"/>
+  </symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24">
+    <path d="M9 3v6.5L4.5 18A2 2 0 0 0 6.3 21h11.4a2 2 0 0 0 1.8-3L15 9.5V3"/>
+    <line x1="8" y1="3" x2="16" y2="3"/><line x1="7.2" y1="15" x2="16.8" y2="15"/>
+  </symbol>
+  <symbol id="i-link" viewBox="0 0 24 24">
+    <path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1 1"/>
+    <path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1-1"/>
+  </symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24">
+    <path d="M12 2.5 4.5 6v6c0 4.5 3.2 8.3 7.5 9.5 4.3-1.2 7.5-5 7.5-9.5V6Z"/>
+    <polyline points="9 12 11.2 14.2 15.2 10"/>
+  </symbol>
+  <symbol id="i-cycle" viewBox="0 0 24 24">
+    <path d="M3.5 12a8.5 8.5 0 0 1 14.5-6"/><polyline points="18 2.5 18 6.5 14 6.5"/>
+    <path d="M20.5 12a8.5 8.5 0 0 1-14.5 6"/><polyline points="6 21.5 6 17.5 10 17.5"/>
+  </symbol>
+  <symbol id="i-infinity" viewBox="0 0 24 24">
+    <path d="M7.5 15.5a3.5 3.5 0 1 1 0-7c2.5 0 4 3.5 4.5 3.5s2-3.5 4.5-3.5a3.5 3.5 0 1 1 0 7c-2.5 0-4-3.5-4.5-3.5s-2 3.5-4.5 3.5Z"/>
+  </symbol>
+  <symbol id="i-broadcast" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="2.5"/>
+    <path d="M8.2 8.2a5.5 5.5 0 0 0 0 7.6"/><path d="M15.8 15.8a5.5 5.5 0 0 0 0-7.6"/>
+    <path d="M5.5 5.5a9 9 0 0 0 0 13"/><path d="M18.5 18.5a9 9 0 0 0 0-13"/>
+  </symbol>
+  <symbol id="i-flow" viewBox="0 0 24 24">
+    <rect x="2.5" y="9" width="6" height="6" rx="1.5"/><rect x="15.5" y="9" width="6" height="6" rx="1.5"/>
+    <line x1="8.5" y1="12" x2="15.5" y2="12"/><polyline points="13 9.5 15.5 12 13 14.5"/>
+  </symbol>
+  <symbol id="i-box" viewBox="0 0 24 24">
+    <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5Z"/>
+    <polyline points="4 7.5 12 12 20 7.5"/><line x1="12" y1="12" x2="12" y2="21"/>
+  </symbol>
+  <symbol id="i-play" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="18" height="18" rx="3"/><polygon points="10 8.5 16 12 10 15.5"/>
+  </symbol>
+  <symbol id="i-award" viewBox="0 0 24 24">
+    <circle cx="12" cy="9" r="5"/><polyline points="8.5 13.4 7 21 12 18.4 17 21 15.5 13.4"/>
+  </symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24">
+    <path d="M12 3l1.9 5.6L19.5 10.5 13.9 12.4 12 18l-1.9-5.6L4.5 10.5l5.6-1.9Z"/>
+  </symbol>
+  <symbol id="i-braces" viewBox="0 0 24 24">
+    <path d="M8.5 3.5c-2 0-2.5 1-2.5 3v2c0 1.8-.7 3-2 3 1.3 0 2 1.2 2 3v2c0 2 .5 3 2.5 3"/>
+    <path d="M15.5 3.5c2 0 2.5 1 2.5 3v2c0 1.8.7 3 2 3-1.3 0-2 1.2-2 3v2c0 2-.5 3-2.5 3"/>
+  </symbol>
+  <symbol id="i-window" viewBox="0 0 24 24">
+    <rect x="2.5" y="4" width="19" height="16" rx="2"/><line x1="2.5" y1="9" x2="21.5" y2="9"/>
+    <line x1="5.8" y1="6.5" x2="5.9" y2="6.5"/><line x1="8.8" y1="6.5" x2="8.9" y2="6.5"/>
+  </symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24">
+    <rect x="2.5" y="4" width="19" height="5" rx="1.5"/>
+    <path d="M4.5 9v9a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V9"/><line x1="10" y1="13.5" x2="14" y2="13.5"/>
+  </symbol>
+  <symbol id="i-key" viewBox="0 0 24 24">
+    <circle cx="8" cy="12" r="4"/><line x1="12" y1="12" x2="21" y2="12"/>
+    <line x1="17.5" y1="12" x2="17.5" y2="15.5"/><line x1="20.5" y1="12" x2="20.5" y2="14.5"/>
+  </symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24">
+    <rect x="2.5" y="4" width="19" height="16" rx="2"/>
+    <polyline points="7 9.5 10 12 7 14.5"/><line x1="12.5" y1="15" x2="17" y2="15"/>
+  </symbol>
+</svg>
+
 
 <header class="site-header">
   <div class="wrap">
@@ -31,6 +139,7 @@
       <nav class="tabs" aria-label="Site sections">
         <a href="#panel-about" data-nav="about" aria-current="true">About</a>
         <a href="#panel-projects" data-nav="projects">Projects</a>
+        <a href="#panel-github" data-nav="github">GitHub</a>
         <a href="#panel-hobbies" data-nav="hobbies">Hobbies &amp; Learning</a>
         <a href="#panel-contact" data-nav="contact">Contact</a>
         <span class="tab-indicator" id="tabIndicator" aria-hidden="true"></span>
@@ -65,6 +174,7 @@
       </div>
     </div>
 
+    <h2 class="section-heading">Overview</h2>
     <div class="origin" id="originText"></div>
 
     <h2 class="section-heading" style="margin-top:3.5rem;">Skills</h2>
@@ -75,6 +185,15 @@
   <section id="panel-projects" class="panel-section" aria-label="Projects">
     <h2 class="section-heading">Projects</h2>
     <div id="projectsList"></div>
+
+    <h2 class="section-heading" style="margin-top:3.5rem;">Awards &amp; recognition</h2>
+    <div id="awardsList"></div>
+  </section>
+
+  <!-- GITHUB -->
+  <section id="panel-github" class="panel-section" aria-label="GitHub activity">
+    <h2 class="section-heading">GitHub</h2>
+    <div id="githubPanel"></div>
   </section>
 
   <!-- HOBBIES -->

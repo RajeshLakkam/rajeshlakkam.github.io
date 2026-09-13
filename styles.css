@@ -538,6 +538,41 @@ main { padding: 3.5rem 0 6rem; }
   max-width: var(--measure);
   margin-top: 2.5rem;
 }
+
+/* under a heading the heading's own spacing is enough — stacking both
+   leaves the text floating away from the thing that names it */
+.section-heading + .origin { margin-top: 0; }
+
+/* The closing line. An accent rule down the left and a fade that dies out
+   before the text ends — enough to lift it off the paragraphs above without
+   turning it into a callout box shouting at the reader. */
+.credo {
+  margin-top: 2.4rem;
+  padding: 1.35rem 1.5rem 1.35rem 1.4rem;
+  border-left: 2px solid var(--signal);
+  background: linear-gradient(90deg, rgba(76, 242, 200, 0.06), transparent 75%);
+}
+
+.origin .credo-text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+/* emphasis by colour and weight, not italics — the line is a statement,
+   not an aside */
+.credo-hl {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--signal);
+}
+
+@media (max-width: 720px) {
+  .credo { padding: 1.1rem 0 1.1rem 1.1rem; }
+  .origin .credo-text { font-size: 1rem; }
+}
 .origin p { margin: 0 0 1.1rem; color: var(--ink); }
 .origin p:last-child { margin-bottom: 0; }
 
@@ -647,10 +682,49 @@ main { padding: 3.5rem 0 6rem; }
 
 .project h3 { font-size: 1.22rem; margin-bottom: 0.55rem; }
 
+/* employer and seat — mono like the date above it, but a step brighter, so
+   the pair reads as one block of context around the title */
+.project-org {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--signal-dim);
+  margin-bottom: 0.7rem;
+}
+
 .project .summary {
   max-width: var(--measure);
   color: var(--ink-dim);
   margin-bottom: 0.9rem;
+}
+
+/* Responsibilities. Hairline markers rather than bullet glyphs — the page
+   already draws structure with thin teal lines, and round dots would compete
+   with the timeline marker to the left. */
+.project-highlights {
+  list-style: none;
+  max-width: var(--measure);
+  margin: 0 0 1.1rem;
+  padding: 0;
+}
+
+.project-highlights li {
+  position: relative;
+  padding-left: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--ink-dim);
+}
+.project-highlights li:last-child { margin-bottom: 0; }
+
+.project-highlights li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 6px;
+  height: 1px;
+  background: var(--signal-dim);
 }
 
 .project .chip-row { margin-bottom: 0.9rem; }
@@ -708,6 +782,86 @@ main { padding: 3.5rem 0 6rem; }
 /* ============================================================
    HOBBIES
    ============================================================ */
+/* ============================================================
+   AWARDS & RECOGNITION
+   ============================================================ */
+/* Panels rather than the timeline treatment: these are discrete honours, not
+   a sequence, and nothing about them is chronological. */
+.award {
+  max-width: var(--measure);
+  padding: 1.25rem 1.4rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--signal-dim);
+  margin-bottom: 1.1rem;
+}
+.award:last-child { margin-bottom: 0; }
+
+.award-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.award-head h3 {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--signal);
+  margin: 0;
+}
+
+svg.award-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--signal);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* who gave it — the citation below carries what it was for */
+.award-org {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  margin-bottom: 0.75rem;
+}
+
+.award p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--ink-dim);
+}
+
+/* The certificate is portrait and tall, so it's capped by height rather than
+   width — at full width it would push the next award off the screen. */
+.award-media {
+  display: block;
+  margin-top: 1.1rem;
+  max-width: 22rem;
+}
+
+.award-media .media-frame {
+  max-width: 100%;
+  transition: border-color 0.25s var(--ease-soft);
+}
+.award-media:hover .media-frame { border-color: var(--signal-dim); }
+
+.award-media-hint {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+}
+
 .hobbies-grid {
   display: grid;
   gap: 1.9rem;
@@ -844,4 +998,204 @@ footer {
   .section-heading { font-size: 1.2rem; }
 
   .contact-links { gap: 0.75rem 1.5rem; }
+}
+
+/* ============================================================
+   SKILL ICONS — Devicon brand marks (<i>) and sprite glyphs (<svg>)
+   normalised to one size and one colour
+   ============================================================ */
+
+/* The sprite is a definitions block, never rendered. Collapsed rather than
+   display:none — a few browsers refuse to resolve <use> into a none'd tree. */
+.sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chip-icon,
+.group-icon {
+  color: var(--signal);
+  flex-shrink: 0;
+}
+
+/* sprite glyphs: stroked, scaled off the text they sit beside */
+svg.chip-icon,
+svg.group-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  width: 1.05em;
+  height: 1.05em;
+}
+
+/* Devicon glyphs are font characters, so they take a font-size rather than a
+   box. The nudge up matches their optical centre to the stroked sprite ones. */
+i.chip-icon,
+i.group-icon {
+  font-size: 1.15em;
+  line-height: 1;
+  font-style: normal;
+}
+
+.skill-group h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.group-icon {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+/* the chip's teal only appears on hover elsewhere; keep the icon steady */
+.chip:hover .chip-icon { color: var(--signal); }
+
+/* ============================================================
+   GITHUB ANALYTICS
+   ============================================================ */
+.gh-loading,
+.gh-fallback {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+}
+
+/* --- the headline figure ---
+   One number, so it's a hero figure rather than a tile in a grid: no box to
+   imply a missing row of siblings, sitting directly on top of the graph it
+   totals. */
+.gh-headline-value {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 3.2rem;
+  line-height: 1;
+  color: var(--signal);
+  font-variant-numeric: tabular-nums;
+}
+
+.gh-headline-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+  margin-top: 0.5rem;
+}
+
+.gh-block { margin-bottom: 1.5rem; }
+
+/* names what the grid below covers, without competing with the total above */
+.gh-heatmap-caption {
+  margin: 1.6rem 0 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+}
+
+/* --- contribution heatmap ---
+   One sequential ramp on the page's own teal: empty days sit at the panel
+   surface and four steps climb to full --signal. One hue, light to dark, no
+   second colour — shade encodes magnitude and nothing else, and the exact
+   count is always in the tooltip so no reader depends on telling two steps
+   apart. */
+.gh-heatmap-block { position: relative; }
+
+/* 53 columns don't fit a phone; the grid scrolls inside its own box rather
+   than widening the page. */
+.gh-heatmap-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+}
+
+.gh-heatmap-plot {
+  --gh-cell: 11px;
+  display: inline-block;
+  min-width: 100%;
+}
+
+.gh-heatmap-months {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--ink-faint);
+}
+
+.gh-heatmap {
+  display: grid;
+  grid-template-rows: repeat(7, var(--gh-cell));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--gh-cell);
+  gap: 3px;                      /* surface gap between cells, never touching */
+}
+
+.gh-cell {
+  box-sizing: border-box;
+  width: var(--gh-cell);
+  height: var(--gh-cell);
+  border-radius: 2px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.gh-cell-pad { visibility: hidden; }
+
+.gh-cell[data-level="1"] { background: #14483C; border-color: #14483C; }
+.gh-cell[data-level="2"] { background: #1E7360; border-color: #1E7360; }
+.gh-cell[data-level="3"] { background: var(--signal-dim); border-color: var(--signal-dim); }
+.gh-cell[data-level="4"] { background: var(--signal); border-color: var(--signal); }
+
+.gh-heatmap-legend {
+  --gh-cell: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  margin-top: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--ink-faint);
+}
+.gh-heatmap-legend span:first-child { margin-right: 0.3rem; }
+.gh-heatmap-legend span:last-child { margin-left: 0.3rem; }
+
+/* follows the pointer across the grid; one node, not 365 */
+.gh-tip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 8px));
+  padding: 0.35rem 0.55rem;
+  background: var(--panel-hi);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.gh-source {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+
+@media (max-width: 720px) {
+  .gh-headline-value { font-size: 2.5rem; }
+
+  /* smaller cells fit more of the year before the grid has to scroll */
+  .gh-heatmap-plot, .gh-heatmap-legend { --gh-cell: 9px; }
 }

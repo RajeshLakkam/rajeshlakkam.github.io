@@ -22,6 +22,15 @@ class BlogDrawer extends HTMLElement {
   }
 
   connectedCallback() {
+    // Same flag the page reads (SITE_DATA.features.blogs). The widget checks it
+    // itself rather than trusting the host to leave the element out, so it stays
+    // self-contained: drop the tag on any page and the flag still governs it.
+    const flags = (window.SITE_DATA && window.SITE_DATA.features) || {};
+    if (flags.blogs === false) {
+      this.remove();
+      return;
+    }
+
     const blogs = (window.SITE_DATA && window.SITE_DATA.blogs) || [];
     this.shadowRoot.innerHTML = `
       <style>

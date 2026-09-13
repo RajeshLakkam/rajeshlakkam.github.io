@@ -9,9 +9,16 @@
 // ============================================================
 
 const SITE_DATA = {
+  // Feature flags. Flip one to false and that section disappears from the
+  // page — nav entry, widget and all — without deleting its content below,
+  // so turning it back on is a one-word change.
+  features: {
+    blogs: false
+  },
+
   profile: {
     name: "Rajesh Lakkam",
-    role: "Software Engineer",
+    role: "Senior Software Engineer",
     tagline: "Building the engines behind reliable, scalable applications.",
     location: "Bengaluru, Karnataka",
     email: "rajesh.lakkam327@gmail.com",
@@ -20,106 +27,246 @@ const SITE_DATA = {
     links: [
       { label: "GitHub", url: "https://github.com/RajeshLakkam" },
       { label: "LinkedIn", url: "https://www.linkedin.com/in/rajesh-lakkam/" },
-      { label: "Résumé (PDF)", url: "assets/resume.pdf" }
+      { label: "Résumé (PDF)", url: "assets/Rajesh_Lakkam.pdf" }
     ],
 
-    origin: `I got into software engineering by accident, fixing a spreadsheet
-macro for a part-time job that had quietly grown into the thing the
-whole team depended on. Watching one small script save people hours
-every week was the hook — I wanted to know how far that idea could go.
+    origin: `I'm a Java backend developer with four and a half years of
+experience building and migrating enterprise-grade applications — Most of that time has been spent in the
+Spring ecosystem: Spring Boot services, REST APIs that other teams build
+on top of, and the data layer underneath them.
 
-Since then I've mostly worked on backend systems and internal tools:
-the unglamorous plumbing that has to be right or everything downstream
-breaks. I like problems with a clear before-and-after — a report that
-used to take 40 seconds and now takes two, a deploy that used to need
-a person babysitting it and now doesn't.
+The work I enjoy most sits where design meets delivery — drawing service
+boundaries that hold up, trading brittle batch jobs for event-driven
+flows, and running things cloud-native on Google Cloud with Pub/Sub and
+Dataflow. I write tests early rather than late, not out of discipline but
+because it's the fastest way I know to find out I was wrong about
+something.
 
-Outside of work I'm usually pulling something apart to understand it,
-which is as true of my hobbies as it is of my job.`
+Four and a half years in, the thing I've come to value most is
+unremarkable reliability: clear boundaries, code the next person can
+read, deploys nobody has to babysit. I'll work across the stack when a
+feature needs it — Angular on the front end, some .NET earlier on — but
+backend systems are where I do my best thinking.`,
+
+    // Closes the overview. Text between *asterisks* renders in the accent.
+    credo: `the best
+engineers aren't the ones with every answer — they're the ones who know
+*where the system fails*, and who are honest about the *trade-offs* they
+chose along the way.`
   },
 
   // Grouped so the strongest, most current work (Google Cloud, Spring) reads
   // first and the older .NET/front-end work sits further down. The grid is
   // auto-fit, so adding or removing a group reflows without touching the CSS.
+  // Each group carries a sprite id; each skill maps to either a Devicon
+  // class (real brand marks) or a sprite id (concepts, which have no logo).
+  // GitHub handle the analytics panel reads from the public API.
+  github: "RajeshLakkam",
+
+  skillIcons: {
+    "Java": "devicon-java-plain",
+    "TypeScript": "devicon-typescript-plain",
+    "JavaScript": "devicon-javascript-plain",
+    "SQL": "i-db",
+    "C#": "devicon-csharp-plain",
+
+    "Google Cloud Platform": "devicon-googlecloud-plain",
+    "Cloud Run": "i-play",
+    "Kubernetes Engine (GKE)": "devicon-kubernetes-plain",
+    "Pub/Sub": "i-broadcast",
+    "Dataflow": "i-flow",
+    "Cloud Storage": "i-box",
+    "IAM": "i-key",
+    "Gemini": "i-sparkle",
+
+    "Spring Boot": "devicon-spring-original",
+    "Spring MVC": "devicon-spring-original",
+    "Spring Security": "devicon-spring-original",
+    "Spring Data": "devicon-spring-original",
+    "Hibernate": "devicon-hibernate-plain",
+    "MySQL": "devicon-mysql-original",
+    "REST APIs": "i-braces",
+    "OpenAPI": "devicon-swagger-plain",
+
+    "Microservices": "i-blocks",
+    "Event-driven architecture": "i-bolt",
+    "Cloud-native applications": "i-cloud",
+    "Scalability": "i-chart",
+    "Software design": "i-compass",
+
+    "JUnit": "devicon-junit-plain",
+    "Test-driven development": "i-check",
+    "Unit testing": "i-flask",
+    "Integration testing": "i-link",
+    "Code coverage": "i-shield",
+    "Postman": "devicon-postman-plain",
+
+    "Git": "devicon-git-plain",
+    "Maven": "devicon-maven-plain",
+    "Docker": "devicon-docker-plain",
+    "CI/CD": "i-cycle",
+    "DevOps": "i-infinity",
+    "Microsoft Azure": "devicon-azure-plain",
+
+    "Angular": "devicon-angular-plain",
+    "HTML": "devicon-html5-plain",
+    "CSS": "devicon-css3-plain",
+    "Bootstrap": "devicon-bootstrap-plain",
+
+    ".NET Framework": "devicon-dot-net-plain",
+    "ASP.NET": "devicon-dotnetcore-plain"
+  },
+
   skills: [
     {
-      group: "Languages",
+      group: "Languages", icon: "i-code",
       items: ["Java", "TypeScript", "JavaScript", "SQL", "C#"]
     },
     {
-      group: "Google Cloud",
+      group: "Google Cloud", icon: "i-cloud",
       items: [
         "Google Cloud Platform", "Cloud Run", "Kubernetes Engine (GKE)",
         "Pub/Sub", "Dataflow", "Cloud Storage", "IAM", "Gemini"
       ]
     },
     {
-      group: "Backend & APIs",
+      group: "Backend & APIs", icon: "i-server",
       items: [
         "Spring Boot", "Spring MVC", "Spring Security", "Spring Data",
         "Hibernate", "MySQL", "REST APIs", "OpenAPI"
       ]
     },
     {
-      group: "Architecture",
+      group: "Architecture", icon: "i-blocks",
       items: [
         "Microservices", "Event-driven architecture", "Cloud-native applications",
         "Scalability", "Software design"
       ]
     },
     {
-      group: "Testing & quality",
+      group: "Testing & quality", icon: "i-check",
       items: [
         "JUnit", "Test-driven development", "Unit testing",
         "Integration testing", "Code coverage", "Postman"
       ]
     },
     {
-      group: "Build & delivery",
+      group: "Build & delivery", icon: "i-terminal",
       items: ["Git", "Maven", "Docker", "CI/CD", "DevOps", "Microsoft Azure"]
     },
     {
-      group: "Front-end",
+      group: "Front-end", icon: "i-window",
       items: ["Angular", "HTML", "CSS", "Bootstrap"]
     },
     {
-      group: "Also worked with",
+      group: "Also worked with", icon: "i-archive",
       items: [".NET Framework", "ASP.NET"]
     }
   ],
 
+  /* Real work history, most recent first — the timeline reads top-down, so
+     newest at the top. `org` carries the employer and the seat; `highlights`
+     are what I actually did, kept as a list rather than folded into prose.
+     `media: none` on all of them: none of this work has a public artefact to
+     link, and an empty frame is worse than no frame. */
   projects: [
     {
-      title: "Analytics pipeline rewrite",
-      period: "2024",
-      summary: "Reporting queries were timing out as event volume grew, so I re-architected the pipeline around streaming aggregation instead of nightly batch jobs — p95 query latency dropped from 40s to under 2s.",
-      stack: ["Python", "Kafka", "PostgreSQL"],
-      links: [{ label: "Writeup", url: "assets/projects/analytics-pipeline.pdf" }],
-      media: { type: "pdf", src: "assets/projects/analytics-pipeline.pdf" }
-    },
-    {
-      title: "Field inspection mobile app",
-      period: "2023",
-      summary: "Built the offline-first mobile client field inspectors use to log site visits without signal, syncing automatically once they're back online.",
-      stack: ["React Native", "SQLite"],
-      links: [{ label: "Code", url: "#" }],
-      media: { type: "image", src: "assets/projects/mobile-app.jpg" }
-    },
-    {
-      title: "Command-line deploy tool",
-      period: "2022",
-      summary: "A small CLI that replaced a wiki page of manual deploy steps with a single command, cutting deploy time from ~25 minutes to about 3.",
-      stack: ["Go"],
-      links: [{ label: "Code", url: "#" }],
-      media: { type: "video", src: "assets/projects/cli-tool-demo.mp4" }
-    },
-    {
-      title: "Personal budgeting tool",
-      period: "2021",
-      summary: "A weekend project turned daily habit — a plain-text ledger with a small parser that categorizes spending automatically.",
-      stack: ["Python"],
-      links: [{ label: "Code", url: "#" }],
+      title: "Gift Registry Data Migration & Bi-Directional Sync",
+      org: "Kognivera · Senior Software Engineer · Senior Java Resource",
+      period: "May 2024 – Present · Bengaluru",
+      summary: "Moving Gift Registry data off Oracle ATG and onto PostgreSQL without ever taking either system offline. The answer was a real-time, bi-directional sync: whatever is written on one side shows up on the other, so the legacy monolith and the new microservices can both stay live and correct through the whole transition.",
+      highlights: [
+        "Architected and implemented a bi-directional, real-time data synchronization solution to migrate Gift Registry data from Oracle ATG to PostgreSQL, letting legacy and new microservices run concurrently without data inconsistency.",
+        "Designed a real-time migration strategy on Google Cloud Pub/Sub and Dataflow, keeping data continuously available in both the legacy ATG application and the new Spring Boot platform.",
+        "Built event-driven pipelines with Cloud Dataflow that stream changes in real time — propagating new records written to PostgreSQL back to Oracle ATG for legacy dependencies, and vice versa.",
+        "Bridged two heterogeneous database ecosystems (Oracle ATG → PostgreSQL) inside a microservices architecture, reconciling schema and data-model differences while holding referential integrity on both sides.",
+        "Delivered a live dual-write synchronization framework: anything added or modified in either system is reflected immediately in the other, with no manual intervention."
+      ],
+      stack: ["Java", "Spring Boot", "Google Cloud Platform", "Pub/Sub", "Dataflow", "PostgreSQL", "Oracle ATG", "Event-driven"],
+      links: [],
       media: { type: "none" }
+    },
+    {
+      title: "Liverpool Gift Registry",
+      org: "Kognivera · Senior Software Engineer · Senior Java Resource",
+      period: "May 2024 – Present · Bengaluru",
+      summary: "A monolithic Oracle ATG Gift Registry service broken out into a distributed microservices architecture — a core component of a high-traffic e-commerce platform handling millions of real-time transactions and events. I built the main services from the ground up and sat between the solution architect and the developers implementing against his decisions.",
+      highlights: [
+        "Led the migration of a monolithic Oracle ATG Gift Registry service to a distributed microservices architecture, delivering a core component of a platform that handles millions of real-time transactions and events.",
+        "Served as the technical bridge between the solution architect and junior developers — turning high-level architectural decisions into actionable tasks and keeping implementation consistent.",
+        "Engineered the platform's main microservices from the ground up, designing RESTful APIs and event-driven communication (Pub/Sub / RabbitMQ) for high-throughput, low-latency transactional flows.",
+        "Resolved application-layer performance bottlenecks and verified the reliability and correctness of every service across development, QA and production at scale.",
+        "Championed code quality and team growth — mentoring junior developers, running rigorous pull request reviews, and enforcing clean code and TDD throughout the project lifecycle."
+      ],
+      stack: ["Java", "Spring Boot", "Microservices", "REST APIs", "Pub/Sub", "RabbitMQ", "Oracle ATG", "Event-driven"],
+      links: [],
+      media: { type: "none" }
+    },
+    {
+      title: "WFE Migration",
+      org: "Infosys · Systems Engineer · Java Resource",
+      period: "Oct 2022 – May 2024 · Bengaluru",
+      summary: "A legacy .NET application re-engineered into Spring Boot microservices. The work began with reading the old codebase closely enough to know what its behaviour actually was — not what it was documented to be — then rebuilding it in Java, with the test coverage the original never had.",
+      highlights: [
+        "Re-engineered a legacy .NET application into Spring Boot microservices, rebuilding the core business logic and exposing RESTful APIs integrated with downstream services.",
+        "Achieved 92% unit-test coverage with JUnit and Mockito; used SonarQube for static analysis and early bug detection.",
+        "Recognised with the Rise Award twice for outstanding project contributions."
+      ],
+      stack: ["Java", "Spring Boot", "Microservices", "REST APIs", "JUnit", "Mockito", "SonarQube", ".NET (legacy)"],
+      links: [],
+      media: { type: "none" }
+    },
+    {
+      title: "Mlivr Application",
+      org: "Infosys · Systems Engineer · Angular Resource",
+      period: "Oct 2022 – May 2024 · Bengaluru",
+      summary: "Front-end work on Mlivr: building the responsive Angular UI, and the integration layer where those components meet the backend's REST APIs.",
+      highlights: [
+        "Built responsive Angular UIs and collaborated with backend teams to integrate front-end components with RESTful APIs.",
+        "Diagnosed and resolved UI bugs using browser developer tools."
+      ],
+      stack: ["Angular", "TypeScript", "HTML", "CSS", "REST APIs"],
+      links: [],
+      media: { type: "none" }
+    },
+    {
+      title: "Full-stack engineering training",
+      org: "Infosys · Systems Engineer Trainee",
+      period: "Apr 2022 – Oct 2022 · Mysuru",
+      summary: "Infosys' foundation programme — the six months that turned a graduate into someone who could be handed a service and trusted with it.",
+      highlights: [
+        "Completed intensive full-stack training covering Java, DBMS and Angular.",
+        "Graduated the Foundation Training Programme in the High Performer category with 91%."
+      ],
+      stack: ["Java", "SQL", "Angular"],
+      links: [],
+      media: { type: "none" }
+    }
+  ],
+
+  /* Shown under the projects timeline. `note` is the citation — what the
+     recognition was actually for, since the name of an award means nothing
+     to a reader outside the company that gave it. */
+  awards: [
+    {
+      title: "Microservices Maestro",
+      org: "Kognivera",
+      note: `Recognised by the team for establishing real-time, two-way data
+synchronization between the new Gift Registry microservices on PostgreSQL
+and the legacy monolith on an ATG Oracle database — keeping the legacy
+application fully supported, with no data loss, using Dataflow and
+Pub/Sub across the whole application.`,
+      media: {
+        type: "image",
+        src: "assets/awards/microservices-maestro.jpg",
+        alt: "KogniVera and Liverpool appreciation certificate for the Gift Registry project, Sprint I — \"Recognizing your excellence\", addressed to Rajesh Lakkam, Our Microservices Maestro."
+      }
+    },
+    {
+      title: "Rise Award, twice",
+      org: "Infosys",
+      note: `Awarded in two consecutive quarters for contributions to the WFE
+migration project.`
     }
   ],
 

@@ -18,6 +18,13 @@ function el(tag, opts = {}, children = []) {
   return node;
 }
 
+/* Feature flags live in SITE_DATA.features (see data.js). A section with no
+   explicit flag stays on, so adding one never requires registering it first. */
+function featureOn(name) {
+  const flags = SITE_DATA.features || {};
+  return flags[name] !== false;
+}
+
 function assetExists(src) {
   return fetch(src, { method: "HEAD" })
     .then((res) => res.ok)
@@ -45,6 +52,21 @@ function renderHero() {
   p.origin.trim().split(/\n\s*\n/).forEach((para) => {
     originEl.appendChild(el("p", { text: para.trim() }));
   });
+
+  /* The closing line gets its own treatment — it's the one claim on the page
+     worth reading twice. *Asterisks* in the text mark the phrases that take
+     the accent; split on them and alternate, so it stays plain text in
+     data.js and never goes near innerHTML. */
+  if (p.credo) {
+    const quote = el("p", { class: "credo-text" });
+    p.credo.trim().replace(/\s+/g, " ").split("*").forEach((chunk, i) => {
+      if (!chunk) return;
+      quote.appendChild(i % 2
+        ? el("em", { class: "credo-hl", text: chunk })
+        : document.createTextNode(chunk));
+    });
+    originEl.appendChild(el("div", { class: "credo" }, [quote]));
+  }
 
   $("#contactLine").textContent = `Based in ${p.location}. ${p.tagline}`;
   const contactLinks = $("#contactLinks");
@@ -95,16 +117,53 @@ function animateHeroName(name) {
   });
 }
 
+/* Icons come in two flavours: a Devicon class for anything with a real brand
+   mark, and a sprite id for the concepts that don't have one. Both end up the
+   same size and colour, so a row can mix them without looking assembled from
+   two sets. Anything unmapped simply renders label-only. */
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function spriteIcon(id, cls) {
+  const svg = document.createElementNS(SVG_NS, "svg");
+  svg.setAttribute("class", cls);
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  const use = document.createElementNS(SVG_NS, "use");
+  // both spellings: href is current, xlink:href is what older Safari reads
+  use.setAttribute("href", "#" + id);
+  use.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "#" + id);
+  svg.appendChild(use);
+  return svg;
+}
+
+function iconFor(key, cls) {
+  if (!key) return null;
+  return key.startsWith("devicon-")
+    ? el("i", { class: cls + " " + key, "aria-hidden": "true" })
+    : spriteIcon(key, cls);
+}
+
 function renderSkills() {
   const grid = $("#skillsGrid");
+  const icons = SITE_DATA.skillIcons || {};
+
   SITE_DATA.skills.forEach((group) => {
     const chips = el("div", { class: "chip-row" },
-      group.items.map((item) => el("span", { class: "chip", text: item }))
+      group.items.map((item) => {
+        const chip = el("span", { class: "chip" });
+        const icon = iconFor(icons[item], "chip-icon");
+        if (icon) chip.appendChild(icon);
+        chip.appendChild(el("span", { text: item }));
+        return chip;
+      })
     );
-    grid.appendChild(el("div", { class: "skill-group" }, [
-      el("h3", { text: group.group }),
-      chips
-    ]));
+
+    const heading = el("h3", {});
+    const groupIcon = iconFor(group.icon, "group-icon");
+    if (groupIcon) heading.appendChild(groupIcon);
+    heading.appendChild(el("span", { text: group.group }));
+
+    grid.appendChild(el("div", { class: "skill-group" }, [heading, chips]));
   });
 }
 
@@ -137,7 +196,9 @@ function buildMediaFrame(media) {
   } else if (media.type === "image") {
     assetExists(media.src).then((ok) => {
       if (!ok) return fallback();
-      const img = el("img", { src: media.src, alt: "" });
+      /* A decorative shot takes an empty alt; a certificate is content, so it
+         describes itself when it can't be seen or won't load. */
+      const img = el("img", { src: media.src, alt: media.alt || "", loading: "lazy" });
       img.addEventListener("error", fallback);
       frame.appendChild(img);
     });
@@ -153,22 +214,76 @@ function renderProjects() {
       proj.stack.map((tech) => el("span", { class: "chip", text: tech }))
     );
 
-    const linksRow = el("div", { class: "project-links" },
-      (proj.links || []).map((l) => el("a", { href: l.url, text: l.label, target: "_blank", rel: "noopener" }))
-    );
-
     const body = el("div", {}, [
       el("div", { class: "project-meta" }, [document.createTextNode(proj.period)]),
-      el("h3", { text: proj.title }),
-      el("p", { class: "summary", text: proj.summary }),
-      chipRow,
-      linksRow
+      el("h3", { text: proj.title })
     ]);
+
+    // Where the work happened, and in what seat — only for the ones that had one.
+    if (proj.org) body.appendChild(el("div", { class: "project-org", text: proj.org }));
+
+    body.appendChild(el("p", { class: "summary", text: proj.summary }));
+
+    /* The summary says what the project was; these say what I did on it.
+       A list, because that's the shape of the information — flattening six
+       responsibilities into one paragraph just hides them. */
+    if (proj.highlights && proj.highlights.length) {
+      body.appendChild(el("ul", { class: "project-highlights" },
+        proj.highlights.map((h) => el("li", { text: h }))
+      ));
+    }
+
+    body.appendChild(chipRow);
+
+    // An empty links row still costs its bottom margin, so only add a real one.
+    if (proj.links && proj.links.length) {
+      body.appendChild(el("div", { class: "project-links" },
+        proj.links.map((l) => el("a", { href: l.url, text: l.label, target: "_blank", rel: "noopener" }))
+      ));
+    }
 
     const mediaFrame = buildMediaFrame(proj.media);
     if (mediaFrame) body.appendChild(mediaFrame);
 
     list.appendChild(el("div", { class: "project" }, [body]));
+  });
+}
+
+/* Awards sit under the timeline they came out of. Each one is a title, who
+   gave it, and what for — the citation matters more than the name, which means
+   nothing to a reader outside the company. */
+function renderAwards() {
+  const list = $("#awardsList");
+  if (!list || !SITE_DATA.awards) return;
+
+  SITE_DATA.awards.forEach((award) => {
+    const head = el("div", { class: "award-head" });
+    const icon = iconFor("i-award", "award-icon");
+    if (icon) head.appendChild(icon);
+    head.appendChild(el("h3", { text: award.title }));
+
+    const card = el("div", { class: "award" }, [
+      head,
+      el("div", { class: "award-org", text: award.org }),
+      el("p", { text: award.note.trim().replace(/\s+/g, " ") })
+    ]);
+
+    /* The certificate itself, when there is one. It's small on the page, so it
+       also links out to the full image — a certificate nobody can read is
+       decoration. */
+    const frame = buildMediaFrame(award.media);
+    if (frame) {
+      card.appendChild(el("a", {
+        class: "award-media",
+        href: award.media.src,
+        target: "_blank",
+        rel: "noopener",
+        "aria-label": "Open the full-size certificate in a new tab"
+      }, [frame]));
+      card.appendChild(el("span", { class: "award-media-hint", text: "Open full size ↗" }));
+    }
+
+    list.appendChild(card);
   });
 }
 
@@ -180,6 +295,213 @@ function renderHobbies() {
       el("p", { text: h.note })
     ]));
   });
+}
+
+/* ---------- GitHub analytics ----------
+   One figure and one graph: every contribution since the account opened, and
+   the last twelve months day by day. Nothing about repositories owned,
+   languages used, or stars collected — none of that is work done.
+
+   The total has to come from the contribution calendar, because that's the
+   only public source that counts private work, and private repositories are
+   where nearly all of this activity lives. GitHub publishes the calendar on
+   the profile page and through GraphQL: the first isn't readable cross-origin,
+   the second needs a token, and a token can't be shipped in public source. So
+   it arrives via a proxy of that same public calendar — a third party, and
+   therefore treated as optional: if it's slow or gone, the panel falls back to
+   a link to the profile rather than showing a broken figure. */
+
+const GH_CACHE_KEY = "gh-activity-v4";
+const GH_CACHE_TTL = 30 * 60 * 1000;   // half an hour is plenty for a CV page
+const GH_CALENDAR_API = "https://github-contributions-api.jogruber.de/v4/";
+
+function ghCacheRead(user) {
+  try {
+    const raw = sessionStorage.getItem(GH_CACHE_KEY);
+    if (!raw) return null;
+    const hit = JSON.parse(raw);
+    if (hit.user !== user || Date.now() - hit.at > GH_CACHE_TTL) return null;
+    return hit.data;
+  } catch (e) {
+    return null;   // private mode, blocked storage — just fetch again
+  }
+}
+
+function ghCacheWrite(user, data) {
+  try {
+    sessionStorage.setItem(GH_CACHE_KEY, JSON.stringify({ user, at: Date.now(), data }));
+  } catch (e) {
+    /* nothing to do; the cache is an optimisation, not a dependency */
+  }
+}
+
+/* 1,284 stays 1,284 — grouped, never compacted. This is the one number on the
+   panel, so it's worth reading exactly. */
+function groupNumber(n) {
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+/* y=all: the total counts every year, and the same response carries the daily
+   grid, so the whole panel is one request (~90KB, once per session). */
+function ghCalendar(user) {
+  const cached = ghCacheRead(user);
+  if (cached) return Promise.resolve(cached);
+
+  return fetch(`${GH_CALENDAR_API}${encodeURIComponent(user)}?y=all`)
+    .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+    .then((d) => {
+      if (!d || !d.total || !Array.isArray(d.contributions)) return null;
+
+      // { "2021": 98, "2022": 135, ... } — one entry per year, unordered.
+      const years = Object.entries(d.total)
+        .filter(([y, n]) => /^\d{4}$/.test(y) && typeof n === "number")
+        .sort((a, b) => Number(a[0]) - Number(b[0]));
+      if (!years.length) return null;
+
+      /* Two things the response does that would quietly wreck the grid: the
+         days run newest year first rather than straight through, and the
+         current year is padded out to December with zero-count days that
+         haven't happened yet. So sort, drop the future, take the last year. */
+      const today = new Date().toISOString().slice(0, 10);
+      const sorted = d.contributions
+        .filter((day) => day.date <= today)
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      const data = {
+        total: years.reduce((sum, [, n]) => sum + n, 0),
+        since: years[0][0],
+        days: sorted.slice(-371)
+      };
+      ghCacheWrite(user, data);
+      return data;
+    })
+    .catch(() => null);
+}
+
+/* --- the graph ---
+   A year of daily counts: magnitude over time on a fixed date grid, so it's a
+   heatmap. Sequential job, so one hue stepped light-to-dark — the page's own
+   teal, four steps above the empty-day surface, never a rainbow. The step is
+   ordinal (GitHub's own level 0-4) and every cell carries its exact count in
+   the tooltip, so nothing is readable by shade alone. */
+const GH_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function contributionHeatmap(cal) {
+  const days = cal.days;
+  if (!days.length) return null;
+
+  const firstDate = new Date(days[0].date + "T00:00:00");
+  const pad = firstDate.getDay();                       // Sunday-first, like the grid
+  const weeks = Math.ceil((pad + days.length) / 7);
+
+  const grid = el("div", { class: "gh-heatmap", role: "img",
+    "aria-label": `${days.reduce((sum, d) => sum + d.count, 0)} contributions in the last year, one cell per day` });
+
+  // Blanks so the first real day lands on its own weekday row.
+  for (let i = 0; i < pad; i++) grid.appendChild(el("div", { class: "gh-cell gh-cell-pad" }));
+
+  days.forEach((d) => {
+    const date = new Date(d.date + "T00:00:00");
+    const when = `${GH_MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    grid.appendChild(el("div", {
+      class: "gh-cell",
+      "data-level": String(d.level || 0),
+      "data-tip": `${d.count} contribution${d.count === 1 ? "" : "s"} · ${when}`
+    }));
+  });
+
+  /* Month labels sit on their own grid of the same column width, each placed
+     on the week its month starts in. */
+  const months = el("div", { class: "gh-heatmap-months" });
+  months.style.gridTemplateColumns = `repeat(${weeks}, var(--gh-cell))`;
+  let lastMonth = -1;
+  days.forEach((d, i) => {
+    const date = new Date(d.date + "T00:00:00");
+    const week = Math.floor((pad + i) / 7);
+    // Skip a label in the final column — it would overflow the grid's width.
+    if (date.getMonth() === lastMonth || date.getDate() > 7 || week >= weeks - 1) return;
+    lastMonth = date.getMonth();
+    const label = el("span", { text: GH_MONTHS[date.getMonth()] });
+    label.style.gridColumn = `${week + 1} / span 4`;
+    months.appendChild(label);
+  });
+
+  const scale = el("div", { class: "gh-heatmap-legend" }, [
+    el("span", { text: "Less" })
+  ]);
+  [0, 1, 2, 3, 4].forEach((lvl) => {
+    scale.appendChild(el("span", { class: "gh-cell", "data-level": String(lvl) }));
+  });
+  scale.appendChild(el("span", { text: "More" }));
+
+  /* The headline sits inside the graph's own block, directly above the grid:
+     one number, then the year it counts from, then the year it draws. */
+  const headline = el("div", { class: "gh-headline" }, [
+    el("div", { class: "gh-headline-value", text: groupNumber(cal.total) }),
+    el("div", { class: "gh-headline-label", text: `Contributions since ${cal.since}` })
+  ]);
+
+  const tip = el("div", { class: "gh-tip", hidden: "hidden" });
+  const plot = el("div", { class: "gh-heatmap-plot" }, [months, grid]);
+  const block = el("div", { class: "gh-block gh-heatmap-block" }, [
+    headline,
+    el("p", { class: "gh-heatmap-caption", text: "Last 12 months, day by day" }),
+    el("div", { class: "gh-heatmap-scroll" }, [plot]),
+    scale,
+    tip
+  ]);
+
+  /* One listener on the grid rather than 365 — the tooltip follows whichever
+     cell is under the pointer. */
+  const showTip = (e) => {
+    const cell = e.target.closest(".gh-cell[data-tip]");
+    if (!cell) return;
+    tip.textContent = cell.getAttribute("data-tip");
+    tip.hidden = false;
+    const box = block.getBoundingClientRect();
+    const spot = cell.getBoundingClientRect();
+    // Clamped so a cell at either end doesn't push the label off the panel.
+    const half = tip.offsetWidth / 2;
+    const x = spot.left - box.left + spot.width / 2;
+    tip.style.left = Math.round(Math.min(Math.max(x, half), box.width - half)) + "px";
+    tip.style.top = Math.round(spot.top - box.top) + "px";
+  };
+  grid.addEventListener("mousemove", showTip);
+  grid.addEventListener("mouseleave", () => { tip.hidden = true; });
+
+  return block;
+}
+
+function renderGitHub() {
+  const root = $("#githubPanel");
+  const user = SITE_DATA.github;
+  if (!root || !user) return;
+
+  const profileUrl = `https://github.com/${user}`;
+  const fail = () => {
+    root.innerHTML = "";
+    root.appendChild(el("p", { class: "gh-fallback" }, [
+      document.createTextNode("Live GitHub data isn't available right now. "),
+      el("a", { href: profileUrl, text: "View the profile on GitHub", target: "_blank", rel: "noopener" })
+    ]));
+  };
+
+  root.appendChild(el("p", { class: "gh-loading", text: "Loading GitHub activity…" }));
+
+  ghCalendar(user)
+    .then((cal) => {
+      if (!cal) return fail();
+      const graph = contributionHeatmap(cal);
+      if (!graph) return fail();
+
+      root.innerHTML = "";
+      root.appendChild(graph);
+      root.appendChild(el("p", { class: "gh-source" }, [
+        document.createTextNode("Live contribution total across all repositories, private work included · "),
+        el("a", { href: profileUrl, text: "@" + user, target: "_blank", rel: "noopener" })
+      ]));
+    })
+    .catch(fail);
 }
 
 /* ---------- section nav ----------
@@ -316,10 +638,16 @@ function initPortrait() {
 
 /* ---------- blog drawer ----------
    The widget itself is defined in blog-drawer.js and listens on the document,
-   so all the page has to do is announce the intent. */
+   so all the page has to do is announce the intent. Behind the `blogs` feature
+   flag: when it is off the nav button is removed from the DOM rather than
+   hidden, so it does not linger as a keyboard tab stop. */
 function initBlogsLink() {
   const btn = $("#navBlogs");
   if (!btn) return;
+  if (!featureOn("blogs")) {
+    btn.remove();
+    return;
+  }
   btn.addEventListener("click", () => {
     document.dispatchEvent(new CustomEvent("open-blog-drawer"));
   });
@@ -328,7 +656,9 @@ function initBlogsLink() {
 renderHero();
 renderSkills();
 renderProjects();
+renderAwards();
 renderHobbies();
+renderGitHub();
 initNav();
 initMobileNav();
 initReveal();
