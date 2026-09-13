@@ -233,7 +233,7 @@ Pub/Sub across the whole application.`,
       media: {
         type: "image",
         src: "assets/awards/microservices-maestro.jpg",
-        alt: "KogniVera and Liverpool appreciation certificate for the Gift Registry project, Sprint I — \"Recognizing your excellence\", addressed to Rajesh Lakkam, Our Microservices Maestro."
+        alt: "KogniVera appreciation certificate for the Gift Registry project, Sprint I — \"Recognizing your excellence\", addressed to Rajesh Lakkam, Our Microservices Maestro."
       }
     },
     {
