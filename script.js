@@ -33,7 +33,8 @@ function assetExists(src) {
 
 function renderHero() {
   const p = SITE_DATA.profile;
-  $("#siteMark").textContent = p.name;
+  // The site mark is static copy in index.html ("A little about me"), not the
+  // name — nothing here should overwrite it.
   $("#heroRole").textContent = p.role.toLowerCase();
   $("#heroTagline").textContent = p.tagline;
   $("#metaLocation").textContent = p.location;
@@ -67,13 +68,6 @@ function renderHero() {
     });
     originEl.appendChild(el("div", { class: "credo" }, [quote]));
   }
-
-  $("#contactLine").textContent = `Based in ${p.location}. ${p.tagline}`;
-  const contactLinks = $("#contactLinks");
-  contactLinks.appendChild(el("a", { href: "mailto:" + p.email, text: p.email }));
-  p.links.forEach((link) => {
-    contactLinks.appendChild(el("a", { href: link.url, text: link.label, target: "_blank", rel: "noopener" }));
-  });
 
   animateHeroName(p.name);
 }
@@ -625,17 +619,21 @@ function renderGitHub() {
    whichever section you're actually looking at. */
 function moveIndicator(link) {
   const indicator = $("#tabIndicator");
-  if (!indicator || !link) return;
+  if (!indicator) return;
+  // About has no tab — it's reached from the site mark — so there are
+  // scroll positions with no current tab at all. Collapse the indicator
+  // rather than leaving it parked under whichever tab was last active.
+  if (!link) { indicator.style.width = "0px"; return; }
   indicator.style.left = link.offsetLeft + "px";
   indicator.style.width = link.offsetWidth + "px";
 }
 
 function setActiveNav(id) {
   const link = $(`[data-nav="${id.replace("panel-", "")}"]`);
-  if (!link || link.getAttribute("aria-current") === "true") return;
+  if (link && link.getAttribute("aria-current") === "true") return;
 
   $$("[data-nav]").forEach((a) => a.setAttribute("aria-current", "false"));
-  link.setAttribute("aria-current", "true");
+  if (link) link.setAttribute("aria-current", "true");
   moveIndicator(link);
 
   if (location.hash !== `#${id}`) history.replaceState(null, "", `#${id}`);
@@ -725,8 +723,9 @@ function initNav() {
   }, { passive: true });
 
   setActiveNav((location.hash || "#" + sections[0].id).slice(1));
-  // About already carries aria-current in the markup, so setActiveNav short-
-  // circuits on a default load — place the indicator once, unconditionally.
+  // No tab carries aria-current in the markup any more (About, the landing
+  // section, isn't a tab), so place the indicator once from whatever the
+  // call above settled on — nothing if we're still in About.
   moveIndicator($('[aria-current="true"]'));
 
   // fonts loading can shift nav widths after first paint — resnap once ready

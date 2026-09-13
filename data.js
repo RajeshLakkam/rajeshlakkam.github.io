@@ -164,14 +164,14 @@ chose along the way.`
       media: { type: "none" }
     },
     {
-      title: "Liverpool Gift Registry",
+      title: "Gift Registry",
       org: "Kognivera · Senior Software Engineer · Senior Java Resource",
       period: "",
       summary: "A monolithic Oracle ATG Gift Registry service broken out into a distributed microservices architecture — a core component of a high-traffic e-commerce platform handling millions of real-time transactions and events. I built the main services from the ground up and sat between the solution architect and the developers implementing against his decisions.",
       highlights: [
         "Led the migration of a monolithic Oracle ATG Gift Registry service to a distributed microservices architecture, delivering a core component of a platform that handles millions of real-time transactions and events.",
         "Served as the technical bridge between the solution architect and junior developers — turning high-level architectural decisions into actionable tasks and keeping implementation consistent.",
-        "Engineered the platform's main microservices from the ground up, designing RESTful APIs and event-driven communication (Pub/Sub / RabbitMQ) for high-throughput, low-latency transactional flows.",
+        "Engineered the platform's pivot microservices from the ground up, designing RESTful APIs and event-driven communication (Pub/Sub) for high-throughput, low-latency transactional flows.",
         "Resolved application-layer performance bottlenecks and verified the reliability and correctness of every service across development, QA and production at scale.",
         "Championed code quality and team growth — mentoring junior developers, running rigorous pull request reviews, and enforcing clean code and TDD throughout the project lifecycle."
       ],
@@ -279,16 +279,16 @@ migration project.`
 
   hobbies: [
     {
-      title: "Mechanical keyboards",
-      note: "Building and tuning them from loose parts — mostly an excuse to solder something."
+      title: "Skating",
+      note: "A childhood ambition I never got the chance to chase. I started at 25, which meant learning it in public — falling, collecting a few injuries, and taking the occasional laugh from people who thought I'd started too late. I kept showing up anyway, and somewhere after enough falls it clicked. It's the clearest reminder I have that being bad at something is only the first stage of being good at it."
     },
     {
-      title: "Bread baking",
-      note: "Currently in a long argument with my starter about hydration percentages."
+      title: "Swimming",
+      note: "The humbling one. I still can't cover 50 metres without stopping, and I've stopped treating that as a footnote — it's the point. It's the one hour in my week where I'm unmistakably a beginner, and staying a beginner on purpose keeps me patient with the things I'm meant to be good at."
     },
     {
-      title: "Old radios",
-      note: "Restoring vacuum-tube radios from the 1950s, one bad capacitor at a time."
+      title: "Cycling",
+      note: "What began as a weekend habit became the way I get to work. The commute turned motivation into routine, which is the harder and more useful half — consistency outlasts intensity, in training and in code. My motorbike has been gathering dust ever since, and I'm in no rush to change that."
     }
   ],
 

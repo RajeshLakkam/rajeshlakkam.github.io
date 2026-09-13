@@ -131,7 +131,7 @@
   <div class="wrap">
     <div class="header-left">
       <span class="status-dot" aria-hidden="true"></span>
-      <a href="#panel-about" class="site-mark" id="siteMark">Rajesh Lakkam</a>
+      <a href="#panel-about" class="site-mark" id="siteMark">A little about me</a>
     </div>
     <button class="nav-toggle" id="navToggle" type="button"
             aria-expanded="false" aria-controls="headerNav" aria-label="Menu">
@@ -140,12 +140,11 @@
 
     <div class="header-right" id="headerNav">
       <nav class="tabs" aria-label="Site sections">
-        <a href="#panel-about" data-nav="about" aria-current="true">About</a>
+        <a href="#panel-skills" data-nav="skills">Skills</a>
         <a href="#panel-projects" data-nav="projects">Projects</a>
         <a href="#panel-awards" data-nav="awards">Awards &amp; Recognition</a>
         <a href="#panel-hobbies" data-nav="hobbies">Hobbies &amp; Learning</a>
         <a href="#panel-github" data-nav="github">GitHub</a>
-        <a href="#panel-contact" data-nav="contact">Contact</a>
         <span class="tab-indicator" id="tabIndicator" aria-hidden="true"></span>
       </nav>
       <button class="nav-blogs" id="navBlogs" type="button">Blogs</button>
@@ -180,8 +179,12 @@
 
     <h2 class="section-heading">Overview</h2>
     <div class="origin" id="originText"></div>
+  </section>
 
-    <h2 class="section-heading" style="margin-top:3.5rem;">Skills</h2>
+  <!-- SKILLS — its own section rather than a sub-heading of About, so it can
+       be a nav target and carry the same rule-and-spacing as every other. -->
+  <section id="panel-skills" class="panel-section" aria-label="Skills">
+    <h2 class="section-heading">Skills</h2>
     <div class="skills-grid" id="skillsGrid"></div>
   </section>
 
@@ -206,20 +209,11 @@
     <div class="hobbies-grid" id="hobbiesGrid"></div>
   </section>
 
-  <!-- GITHUB — last before contact: it's the live-activity coda, not a claim
+  <!-- GITHUB — the closing section: it's the live-activity coda, not a claim
        the rest of the page rests on. -->
   <section id="panel-github" class="panel-section" aria-label="GitHub activity">
     <h2 class="section-heading">GitHub</h2>
     <div id="githubPanel"></div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="panel-contact" class="panel-section" aria-label="Contact">
-    <h2 class="section-heading">Contact</h2>
-    <div class="contact">
-      <p id="contactLine"></p>
-      <div class="contact-links" id="contactLinks"></div>
-    </div>
   </section>
 
 </main>
