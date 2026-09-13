@@ -148,12 +148,12 @@ chose along the way.`
 
   projects: [
     {
-      title: "Gift Registry Data Migration & Bi-Directional Sync",
+      title: "Data Migration & Bi-Directional Sync",
       org: "Kognivera · Senior Software Engineer · Senior Java Resource",
       period: "",
-      summary: "Moving Gift Registry data off Oracle ATG and onto PostgreSQL without ever taking either system offline. The answer was a real-time, bi-directional sync: whatever is written on one side shows up on the other, so the legacy monolith and the new microservices can both stay live and correct through the whole transition.",
+      summary: "Moving data off Oracle ATG and onto PostgreSQL without ever taking either system offline. The answer was a real-time, bi-directional sync: whatever is written on one side shows up on the other, so the legacy monolith and the new microservices can both stay live and correct through the whole transition.",
       highlights: [
-        "Architected and implemented a bi-directional, real-time data synchronization solution to migrate Gift Registry data from Oracle ATG to PostgreSQL, letting legacy and new microservices run concurrently without data inconsistency.",
+        "Architected and implemented a bi-directional, real-time data synchronization solution to migrate data from Oracle ATG to PostgreSQL, letting legacy and new microservices run concurrently without data inconsistency.",
         "Designed a real-time migration strategy on Google Cloud Pub/Sub and Dataflow, keeping data continuously available in both the legacy ATG application and the new Spring Boot platform.",
         "Built event-driven pipelines with Cloud Dataflow that stream changes in real time — propagating new records written to PostgreSQL back to Oracle ATG for legacy dependencies, and vice versa.",
         "Bridged two heterogeneous database ecosystems (Oracle ATG → PostgreSQL) inside a microservices architecture, reconciling schema and data-model differences while holding referential integrity on both sides.",
