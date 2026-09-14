@@ -15,7 +15,7 @@ const SITE_DATA = {
     links: [
       { label: "GitHub", url: "https://github.com/RajeshLakkam" },
       { label: "LinkedIn", url: "https://www.linkedin.com/in/rajesh-lakkam/" },
-      { label: "Résumé (PDF)", url: "assets/Rajesh_Lakkam.pdf" }
+      { label: "Résumé (PDF)", url: "assets/resume.pdf" }
     ],
 
     origin: `I'm a Java backend developer with four and a half years of
