@@ -221,6 +221,28 @@ chose along the way.`
     }
   ],
 
+  personalProjects: [
+    {
+      title: "Call Blocker — Spam Screening",
+      org: "Android app · Published on Google Play",
+      period: "",
+      summary: "An Android app that rejects telemarketing, promotional and spam calls before the phone rings. Screening happens entirely on the device: no accounts, no analytics, no ads, and no server of its own.",
+      highlights: [
+        "Every incoming call runs through an ordered rule chain where the first match wins: emergency numbers, allow list and contacts always ring; then whitelist-only mode, block list, reported numbers, withheld/international/pattern rules, and a shared community spam list.",
+        "Built for Indian numbering: rejects the TRAI 140 telemarketer series, and silences (rather than hangs up on) the 1600 series and short codes, since banks and service providers genuinely call from them.",
+        "Uses Android's call screening service, so the OS hands each call to the app directly: no background service to keep alive, no battery exemption, and it keeps working after being swiped out of recents.",
+        "Privacy by design: no call log, SMS, microphone or location access. Contacts are optional and only ever asked one question, \"does any contact have this number?\"",
+        "One-tap report blocks a number immediately and can add it to the shared spam list, which every install downloads daily; the blocked-call history deletes itself after 8 days."
+      ],
+      stack: ["Android", "Call Screening API", "Privacy-first", "On-device"],
+      links: [
+        { label: "Get it on Google Play", url: "https://play.google.com/store/apps/details?id=com.rlakkam.callblocker" },
+        { label: "Privacy policy", url: "https://rajeshlakkam.github.io/call-blocker-spam-list/privacy-policy" }
+      ],
+      media: { type: "none" }
+    }
+  ],
+
   awards: [
     {
       title: "Microservices Maestro",

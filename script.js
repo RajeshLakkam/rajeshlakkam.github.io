@@ -205,9 +205,11 @@ function buildMediaFrame(media) {
    click. Filled by renderProjects, read by initProjectCards. */
 const projectCards = [];
 
-function renderProjects() {
-  const list = $("#projectsList");
-  SITE_DATA.projects.forEach((proj, i) => {
+/* Work projects and personal projects share one card renderer; the prefix
+   keeps each list's body ids unique. */
+function renderProjects(items, listSelector, idPrefix) {
+  const list = $(listSelector);
+  items.forEach((proj, i) => {
     const chipRow = el("div", { class: "chip-row" },
       proj.stack.map((tech) => el("span", { class: "chip", text: tech }))
     );
@@ -237,7 +239,7 @@ function renderProjects() {
       head.appendChild(org);
     }
 
-    const body = el("div", { class: "project-body", id: "project-" + i }, [
+    const body = el("div", { class: "project-body", id: idPrefix + i }, [
       el("p", { class: "summary", text: proj.summary })
     ]);
 
@@ -822,7 +824,8 @@ function initBlogsLink() {
 
 renderHero();
 renderSkills();
-renderProjects();
+renderProjects(SITE_DATA.projects, "#projectsList", "project-");
+renderProjects(SITE_DATA.personalProjects, "#personalProjectsList", "personal-project-");
 renderAwards();
 renderCertifications();
 renderHobbies();

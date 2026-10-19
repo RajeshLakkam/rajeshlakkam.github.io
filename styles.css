@@ -637,9 +637,9 @@ main { padding: 3.5rem 0 6rem; }
 /* ============================================================
    PROJECTS — vertical log with a connecting trace
    ============================================================ */
-#projectsList { position: relative; }
+#projectsList, #personalProjectsList { position: relative; }
 
-#projectsList::before {
+#projectsList::before, #personalProjectsList::before {
   content: "";
   position: absolute;
   left: 5px;
